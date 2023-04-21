@@ -13,7 +13,7 @@ import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 
 @Slf4j
-@PluginDescriptor(name = "Example")
+@PluginDescriptor(name = "Runelite Tracker")
 public class TrackerPlugin extends Plugin {
 	@Inject
 	private Client client;
