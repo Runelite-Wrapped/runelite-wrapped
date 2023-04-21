@@ -7,6 +7,10 @@ import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
 import net.runelite.api.events.GameStateChanged;
+import net.runelite.api.events.StatChanged;
+import net.runelite.api.events.HitsplatApplied;
+import net.runelite.api.events.GrandExchangeOfferChanged;
+import net.runelite.api.events.GameTick;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
@@ -15,6 +19,10 @@ import net.runelite.client.plugins.PluginDescriptor;
 @Slf4j
 @PluginDescriptor(name = "Runelite Tracker")
 public class TrackerPlugin extends Plugin {
+
+	// private game tick count
+	private int tickCount = 0;
+
 	@Inject
 	private Client client;
 
@@ -43,6 +51,59 @@ public class TrackerPlugin extends Plugin {
 							+ config.greeting(),
 					null);
 		}
+	}
+
+	@Subscribe()
+	public void onStatChanged(StatChanged event) {
+		log.info("StatChanged: {}", event);
+		client.addChatMessage(
+				ChatMessageType.GAMEMESSAGE,
+				"",
+				"StatChanged: " + event,
+				null);
+	}
+
+	@Subscribe()
+	public void onHitsplatApplied(
+			HitsplatApplied event) {
+		log.info("HitsplatApplied: {}", event);
+		client.addChatMessage(
+				ChatMessageType.GAMEMESSAGE,
+				"",
+				"HitsplatApplied: " + event,
+				null);
+	}
+
+	@Subscribe()
+	public void onGrandExchangeOfferChanged(
+			GrandExchangeOfferChanged event) {
+		log.info("GrandExchangeOfferChanged: {}",
+				event);
+		client.addChatMessage(
+				ChatMessageType.GAMEMESSAGE,
+				"",
+				"GrandExchangeOfferChanged: "
+						+ event,
+				null);
+	}
+
+	@Subscribe()
+	public void onGameTick(GameTick event) {
+		log.info("GameTick: {}", event);
+
+		// increment game tick count
+		tickCount++;
+
+		// only print every 100 ticks
+		if (tickCount % 100 != 0) {
+			return;
+		}
+
+		client.addChatMessage(
+				ChatMessageType.GAMEMESSAGE,
+				"",
+				"GameTick: " + event,
+				null);
 	}
 
 	@Provides
