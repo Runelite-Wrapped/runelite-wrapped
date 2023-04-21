@@ -1,4 +1,6 @@
-package com.example;
+package com.tracker;
+
+import com.tracker.TrackerPlugin;
 
 import net.runelite.client.RuneLite;
 import net.runelite.client.externalplugins.ExternalPluginManager;
