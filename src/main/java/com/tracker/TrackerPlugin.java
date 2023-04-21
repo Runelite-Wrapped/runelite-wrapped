@@ -22,6 +22,7 @@ public class TrackerPlugin extends Plugin {
 
 	// private game tick count
 	private int tickCount = 0;
+	private int tickInterval = 10;
 
 	@Inject
 	private Client client;
@@ -95,7 +96,7 @@ public class TrackerPlugin extends Plugin {
 		tickCount++;
 
 		// only print every 100 ticks
-		if (tickCount % 100 != 0) {
+		if (tickCount % tickInterval != 0) {
 			return;
 		}
 
