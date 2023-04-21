@@ -1,4 +1,4 @@
-# Example
+# Runelite Tracker
 An example greeter plugin
 
 ## vscode setup
