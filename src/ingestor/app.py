@@ -6,10 +6,8 @@ app = Flask(__name__)
 
 _recieved_data = defaultdict(list)
 
-# # add index / root route, that returns html with clickable links to all paths in _recieved_data
-# @app.route('/', defaults={'path': ''}, methods=['GET'])
-# def handle_get_request(path):
-
+# add some dummy data
+_recieved_data["fake_path"].append({"test": 'he'})
 
 @app.route('/', defaults={'path': ''}, methods=['GET'])
 @app.route('/<path:path>', methods=['GET'])
