@@ -17,7 +17,15 @@ import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.MediaType;
+
+// import IOException
+import java.io.IOException;
 
 @Slf4j
 @PluginDescriptor(name = "Runelite Tracker")
@@ -53,19 +61,58 @@ public class TrackerPlugin extends Plugin {
 					ChatMessageType.GAMEMESSAGE,
 					"",
 					"Example says "
-							+ config.greeting(),
+							+ config.server(),
 					null);
 		}
 	}
 
 	@Subscribe()
 	public void onStatChanged(StatChanged event) {
-		log.info("StatChanged: {}", event);
-		client.addChatMessage(
-				ChatMessageType.GAMEMESSAGE,
-				"",
-				"StatChanged: " + event,
-				null);
+		// define url from config.server() and append "api/v1/stat-changed/", handle
+		// missing trailing slash
+		String url = config.server();
+		if (!url.endsWith("/")) {
+			url += "/";
+		}
+		url += "api/v1/stat-changed/";
+
+		// define and object mapper
+		ObjectMapper mapper = new ObjectMapper();
+
+		// create a new http client
+		OkHttpClient httpClient = new OkHttpClient();
+
+		// get json for the event and handle JsonProcessingException
+		try {
+			String json = mapper
+					.writeValueAsString(event);
+			// create a new post request
+			Request request = new Request.Builder()
+					.url(url)
+					.post(RequestBody.create(json,
+							MediaType.get(
+									"application/json; charset=utf-8")))
+					.build();
+			log.info("StatChanged: {}", json);
+
+			// send the request and handle IOException
+			try {
+				log.info(
+						"Sending StatChanged to {}",
+						url);
+				httpClient.newCall(request)
+						.execute();
+			} catch (IOException e) {
+				e.printStackTrace();
+				log.info(
+						"Failed to send StatChanged");
+				return;
+			}
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return;
+		}
+
 	}
 
 	@Subscribe()
