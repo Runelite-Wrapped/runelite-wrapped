@@ -66,15 +66,19 @@ public class TrackerPlugin extends Plugin {
 		}
 	}
 
-	@Subscribe()
-	public void onStatChanged(StatChanged event) {
-		// define url from config.server() and append "api/v1/stat-changed/", handle
+	// function that sends telemetry to the server
+	// should take in an event object (any type that can be serialised by jackson),
+	// and an endpoint
+	// will serialise the object, and send it to the server
+	private void sendTelemetry(Object event,
+			String endpoint) {
+		// define url from config.server() and append endpoint, handle
 		// missing trailing slash
 		String url = config.server();
 		if (!url.endsWith("/")) {
 			url += "/";
 		}
-		url += "api/v1/stat-changed/";
+		url += endpoint;
 
 		// define and object mapper
 		ObjectMapper mapper = new ObjectMapper();
@@ -93,56 +97,51 @@ public class TrackerPlugin extends Plugin {
 							MediaType.get(
 									"application/json; charset=utf-8")))
 					.build();
-			log.info("StatChanged: {}", json);
+			log.info("Sending {} to {}", event,
+					url);
 
 			// send the request and handle IOException
 			try {
-				log.info(
-						"Sending StatChanged to {}",
-						url);
 				httpClient.newCall(request)
 						.execute();
 			} catch (IOException e) {
 				e.printStackTrace();
 				log.info(
-						"Failed to send StatChanged");
+						"Failed to send {}",
+						event);
 				return;
 			}
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 			return;
 		}
+	}
 
+	@Subscribe()
+	public void onStatChanged(StatChanged event) {
+		// send event data to server
+		sendTelemetry(event,
+				"api/v1/stat-changed");
 	}
 
 	@Subscribe()
 	public void onHitsplatApplied(
 			HitsplatApplied event) {
-		log.info("HitsplatApplied: {}", event);
-		client.addChatMessage(
-				ChatMessageType.GAMEMESSAGE,
-				"",
-				"HitsplatApplied: " + event,
-				null);
+		// send event data to server
+		sendTelemetry(event,
+				"api/v1/hitsplat-applied");
 	}
 
 	@Subscribe()
 	public void onGrandExchangeOfferChanged(
 			GrandExchangeOfferChanged event) {
-		log.info("GrandExchangeOfferChanged: {}",
-				event);
-		client.addChatMessage(
-				ChatMessageType.GAMEMESSAGE,
-				"",
-				"GrandExchangeOfferChanged: "
-						+ event,
-				null);
+		// send event data to server
+		sendTelemetry(event,
+				"api/v1/grand-exchange-offer-changed");
 	}
 
 	@Subscribe()
 	public void onGameTick(GameTick event) {
-		log.info("GameTick: {}", event);
-
 		// increment game tick count
 		tickCount++;
 
@@ -151,11 +150,10 @@ public class TrackerPlugin extends Plugin {
 			return;
 		}
 
-		client.addChatMessage(
-				ChatMessageType.GAMEMESSAGE,
-				"",
-				"GameTick: " + event,
-				null);
+		// send event data to server
+		// TODO: we should construct and object with important game state
+		// information and send that instead of the event
+		sendTelemetry(event, "api/v1/game-tick");
 	}
 
 	@Provides
