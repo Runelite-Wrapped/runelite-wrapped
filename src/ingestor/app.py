@@ -33,5 +33,17 @@ def handle_get_request(path):
         return "No data found", 404
 
 
+@app.route('/<path:path>', methods=['DELETE'])
+def handle_delete_request(path):
+    print(f"Sender IP: {request.remote_addr}")
+    print(f"Path: {path}")
+
+    if path in _recieved_data:
+        del _recieved_data[path]
+        return "Data deleted", 200
+    else:
+        return "No data found", 404
+
+
 if __name__ == "__main__":
     app.run(debug=True)
