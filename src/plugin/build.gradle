@@ -15,6 +15,12 @@ def runeLiteVersion = 'latest.release'
 dependencies {
 	compileOnly group: 'net.runelite', name:'client', version: runeLiteVersion
 
+	    // OkHttp
+    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
+
+    // Jackson
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.2'
+
 	compileOnly 'org.projectlombok:lombok:1.18.20'
 	annotationProcessor 'org.projectlombok:lombok:1.18.20'
 

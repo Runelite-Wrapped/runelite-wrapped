@@ -16,6 +16,9 @@ import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import okhttp3.OkHttpClient;
+
 @Slf4j
 @PluginDescriptor(name = "Runelite Tracker")
 public class TrackerPlugin extends Plugin {
@@ -33,6 +36,7 @@ public class TrackerPlugin extends Plugin {
 	@Override
 	protected void startUp() throws Exception {
 		log.info("Example started!");
+
 	}
 
 	@Override
