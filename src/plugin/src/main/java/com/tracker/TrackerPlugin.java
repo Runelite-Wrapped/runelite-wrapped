@@ -6,6 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
+import net.runelite.api.Player;
+import net.runelite.api.Skill;
+import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.StatChanged;
 import net.runelite.api.events.HitsplatApplied;
@@ -17,7 +20,6 @@ import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -26,6 +28,98 @@ import okhttp3.MediaType;
 
 // import IOException
 import java.io.IOException;
+
+// telemetry data class definition
+class TelemetryData {
+	// timestamp of the event
+	private long timestamp;
+
+	// event data
+	private Object data;
+
+	// player username
+	private String username;
+
+	// constructor
+	public TelemetryData(Object data,
+			String username) {
+		// set timestamp to current time
+		timestamp = System.currentTimeMillis();
+
+		// set data to the data passed in
+		this.data = data;
+		this.username = username;
+	}
+
+	// getters
+	public long getTimestamp() {
+		return timestamp;
+	}
+
+	public Object getData() {
+		return data;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	// setters
+	public void setTimestamp(long timestamp) {
+		this.timestamp = timestamp;
+	}
+
+	public void setData(Object data) {
+		this.data = data;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+}
+
+// game tick data
+class GameTickData {
+
+	// variable definitions
+	private int x;
+	private int y;
+	private int health;
+	private int prayer;
+	private int energy;
+
+	// constructor
+	public GameTickData(int x, int y,
+			int health, int prayer,
+			int energy) {
+		this.x = x;
+		this.y = y;
+		this.health = health;
+		this.prayer = prayer;
+		this.energy = energy;
+	}
+
+	// getters
+	public int getX() {
+		return x;
+	}
+
+	public int getY() {
+		return y;
+	}
+
+	public int getHealth() {
+		return health;
+	}
+
+	public int getPrayer() {
+		return prayer;
+	}
+
+	public int getEnergy() {
+		return energy;
+	}
+}
 
 @Slf4j
 @PluginDescriptor(name = "Runelite Tracker")
@@ -80,6 +174,11 @@ public class TrackerPlugin extends Plugin {
 		}
 		url += endpoint;
 
+		// create a new telemetry data object
+		TelemetryData telemetryData = new TelemetryData(
+				event, client.getLocalPlayer()
+						.getName());
+
 		// define and object mapper
 		ObjectMapper mapper = new ObjectMapper();
 
@@ -89,7 +188,8 @@ public class TrackerPlugin extends Plugin {
 		// get json for the event and handle JsonProcessingException
 		try {
 			String json = mapper
-					.writeValueAsString(event);
+					.writeValueAsString(
+							telemetryData);
 			// create a new post request
 			Request request = new Request.Builder()
 					.url(url)
@@ -101,19 +201,10 @@ public class TrackerPlugin extends Plugin {
 					url);
 
 			// send the request and handle IOException
-			try {
-				httpClient.newCall(request)
-						.execute();
-			} catch (IOException e) {
-				e.printStackTrace();
-				log.info(
-						"Failed to send {}",
-						event);
-				return;
-			}
-		} catch (JsonProcessingException e) {
+			httpClient.newCall(request)
+					.execute();
+		} catch (IOException e) {
 			e.printStackTrace();
-			return;
 		}
 	}
 
@@ -151,9 +242,39 @@ public class TrackerPlugin extends Plugin {
 		}
 
 		// send event data to server
-		// TODO: we should construct and object with important game state
 		// information and send that instead of the event
-		sendTelemetry(event, "api/v1/game-tick");
+		sendTelemetry(this.buildGameTickData(),
+				"api/v1/game-tick");
+
+	}
+
+	private GameTickData buildGameTickData() {
+		// get player
+		Player player = client.getLocalPlayer();
+
+		// get player location
+		LocalPoint localPoint = player
+				.getLocalLocation();
+
+		// get player location
+		int x = localPoint.getX();
+		int y = localPoint.getY();
+
+		// get player health
+		int health = client.getBoostedSkillLevel(
+				Skill.HITPOINTS);
+
+		// get player prayer
+		int prayer = client.getBoostedSkillLevel(
+				Skill.PRAYER);
+
+		// get player run energy
+		int energy = client.getEnergy();
+
+		// create a new game tick data object
+		return new GameTickData(
+				x, y, health, prayer, energy);
+
 	}
 
 	@Provides
