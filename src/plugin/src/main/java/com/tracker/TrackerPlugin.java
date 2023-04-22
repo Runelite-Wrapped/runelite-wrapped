@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.Response;
 import okhttp3.RequestBody;
 import okhttp3.MediaType;
 
@@ -40,15 +41,18 @@ class TelemetryData {
 	// player username
 	private String username;
 
+	private String event;
+
 	// constructor
 	public TelemetryData(Object data,
-			String username) {
+			String username, String event) {
 		// set timestamp to current time
 		timestamp = System.currentTimeMillis();
 
 		// set data to the data passed in
 		this.data = data;
 		this.username = username;
+		this.event = event;
 	}
 
 	// getters
@@ -64,17 +68,8 @@ class TelemetryData {
 		return username;
 	}
 
-	// setters
-	public void setTimestamp(long timestamp) {
-		this.timestamp = timestamp;
-	}
-
-	public void setData(Object data) {
-		this.data = data;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
+	public String getEvent() {
+		return event;
 	}
 }
 
@@ -87,16 +82,18 @@ class GameTickData {
 	private int health;
 	private int prayer;
 	private int energy;
+	private int sessionTickCount;
 
 	// constructor
 	public GameTickData(int x, int y,
 			int health, int prayer,
-			int energy) {
+			int energy, int sessionTickCount) {
 		this.x = x;
 		this.y = y;
 		this.health = health;
 		this.prayer = prayer;
 		this.energy = energy;
+		this.sessionTickCount = sessionTickCount;
 	}
 
 	// getters
@@ -119,6 +116,10 @@ class GameTickData {
 	public int getEnergy() {
 		return energy;
 	}
+
+	public int getSessionTickCount() {
+		return sessionTickCount;
+	}
 }
 
 @Slf4j
@@ -131,6 +132,9 @@ public class TrackerPlugin extends Plugin {
 
 	@Inject
 	private Client client;
+
+	@Inject
+	private OkHttpClient okHttpClient;
 
 	@Inject
 	private TrackerConfig config;
@@ -165,25 +169,19 @@ public class TrackerPlugin extends Plugin {
 	// and an endpoint
 	// will serialise the object, and send it to the server
 	private void sendTelemetry(Object event,
-			String endpoint) {
+			String eventName) {
 		// define url from config.server() and append endpoint, handle
 		// missing trailing slash
 		String url = config.server();
-		if (!url.endsWith("/")) {
-			url += "/";
-		}
-		url += endpoint;
 
 		// create a new telemetry data object
 		TelemetryData telemetryData = new TelemetryData(
 				event, client.getLocalPlayer()
-						.getName());
+						.getName(),
+				eventName);
 
 		// define and object mapper
 		ObjectMapper mapper = new ObjectMapper();
-
-		// create a new http client
-		OkHttpClient httpClient = new OkHttpClient();
 
 		// get json for the event and handle JsonProcessingException
 		try {
@@ -197,12 +195,16 @@ public class TrackerPlugin extends Plugin {
 							MediaType.get(
 									"application/json; charset=utf-8")))
 					.build();
-			log.info("Sending {} to {}", event,
+			log.info("Sending {} to {}",
+					json,
 					url);
 
 			// send the request and handle IOException
-			httpClient.newCall(request)
+			Response response = okHttpClient
+					.newCall(request)
 					.execute();
+			response.close();
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -212,7 +214,7 @@ public class TrackerPlugin extends Plugin {
 	public void onStatChanged(StatChanged event) {
 		// send event data to server
 		sendTelemetry(event,
-				"api/v1/stat-changed");
+				"stat-changed");
 	}
 
 	@Subscribe()
@@ -220,7 +222,7 @@ public class TrackerPlugin extends Plugin {
 			HitsplatApplied event) {
 		// send event data to server
 		sendTelemetry(event,
-				"api/v1/hitsplat-applied");
+				"hitsplat-applied");
 	}
 
 	@Subscribe()
@@ -228,7 +230,7 @@ public class TrackerPlugin extends Plugin {
 			GrandExchangeOfferChanged event) {
 		// send event data to server
 		sendTelemetry(event,
-				"api/v1/grand-exchange-offer-changed");
+				"grand-exchange-offer-changed");
 	}
 
 	@Subscribe()
@@ -244,7 +246,7 @@ public class TrackerPlugin extends Plugin {
 		// send event data to server
 		// information and send that instead of the event
 		sendTelemetry(this.buildGameTickData(),
-				"api/v1/game-tick");
+				"game-tick");
 
 	}
 
@@ -273,7 +275,8 @@ public class TrackerPlugin extends Plugin {
 
 		// create a new game tick data object
 		return new GameTickData(
-				x, y, health, prayer, energy);
+				x, y, health, prayer, energy,
+				tickCount);
 
 	}
 
