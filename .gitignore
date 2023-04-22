@@ -1,3 +1,7 @@
+# General
+scratch/
+
+# Java
 .gradle
 build
 .idea/
@@ -9,3 +13,12 @@ nb-configuration.xml
 nbproject/
 bin/
 .vscode/
+
+# Python
+.venv/
+venv/
+__pycache__/
+.ipynb_checkpoints/
+*.pyc
+.env
+*.png
