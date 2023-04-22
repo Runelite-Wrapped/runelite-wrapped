@@ -14,6 +14,7 @@ import net.runelite.api.events.StatChanged;
 import net.runelite.api.events.HitsplatApplied;
 import net.runelite.api.events.GrandExchangeOfferChanged;
 import net.runelite.api.events.GameTick;
+import net.runelite.api.events.ActorDeath;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
@@ -223,6 +224,12 @@ public class TrackerPlugin extends Plugin {
 		// send event data to server
 		sendTelemetry(event,
 				"hitsplat-applied");
+	}
+
+	@Subscribe()
+	public void onActorDeath(ActorDeath event) {
+		// send event data to server
+		sendTelemetry(event, "actor-death");
 	}
 
 	@Subscribe()
