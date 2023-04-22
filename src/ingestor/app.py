@@ -28,7 +28,7 @@ def handle_get_request(path):
     print(f"Path: {path}")
 
     if path in _recieved_data:
-        return json.dumps(_recieved_data[path], indent=4).encode("utf-8"), 200
+        return _recieved_data[path], 200
     else:
         return "No data found", 404
 
