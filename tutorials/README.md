@@ -1,5 +1,9 @@
 # Tutorials
 
+I have compiled a bunch of tutorials to help you spool up for contributing to this project. There are a bunch of folders starting with a number i.e. `tutorials/1_pydantic/` for putting tutorial scratch scripts and notes.
+
+## Links
+
 Here is a list of tutorials relevant to getting spooled up for each component
 
 * General
