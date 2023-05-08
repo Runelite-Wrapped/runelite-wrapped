@@ -40,12 +40,17 @@ def seed_forever():
 
     i = 0
     while True:
-        sample = _make_sample_data(i)
-        response = requests.post(_URL, json=sample)
-        print(response.status_code)
-        print(response.text)
-        i += 1
-        time.sleep(0.6)
+        try:
+            sample = _make_sample_data(i)
+            response = requests.post(_URL, json=sample)
+            print(response.status_code)
+            print(response.text)
+            i += 1
+            time.sleep(0.6)
+
+        except Exception as e:
+            print(f"Exception encountered {e}")
+            time.sleep(0.6)
 
 
 
