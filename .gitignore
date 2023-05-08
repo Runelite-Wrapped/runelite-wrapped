@@ -1,6 +1,8 @@
 # General
 scratch/
 
+tmp*/
+
 # Java
 .gradle
 build
