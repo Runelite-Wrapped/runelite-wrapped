@@ -8,6 +8,6 @@ import net.runelite.client.config.ConfigItem;
 public interface TrackerConfig extends Config {
 	@ConfigItem(keyName = "server", name = "Ingress Server", description = "Server to send telemetry to")
 	default String server() {
-		return "http://localhost:8000/api/v1/event";
+		return "http://localhost:8000/";
 	}
 }
