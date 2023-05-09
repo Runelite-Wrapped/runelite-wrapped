@@ -172,8 +172,14 @@ public class TrackerPlugin extends Plugin {
 	private void sendTelemetry(Object event,
 			String eventName) {
 		// define url from config.server() and append endpoint, handle
-		// missing trailing slash
+		// missing trailing slash, and add "api/v1/event"
 		String url = config.server();
+		if (!url.endsWith("/")) {
+			url += "/";
+		}
+		url += "api/v1/event";
+		// add event name to url
+		url += "/" + eventName + "/";
 
 		// create a new telemetry data object
 		TelemetryData telemetryData = new TelemetryData(
