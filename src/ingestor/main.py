@@ -1,11 +1,8 @@
-from pymongo import MongoClient
-from bson.objectid import ObjectId
-from fastapi import FastAPI
-from dotenv import load_dotenv
-import pymongo
-import datetime
-import pprint
 import os
+
+from dotenv import load_dotenv
+from fastapi import FastAPI
+from pymongo import MongoClient
 
 load_dotenv()
 
