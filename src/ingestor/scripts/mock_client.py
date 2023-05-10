@@ -1,7 +1,13 @@
+import os
+
 import time
 import requests
+from dotenv import load_dotenv
 
-_URL = "http://localhost:8000/api/v1/event/game-tick/"
+load_dotenv()
+SERVER_IP = os.environ["SERVER_IP"]
+
+_URL = f"http://{SERVER_IP}:8000/api/v1/event/game-tick/"
 
 # Example data:
 # {
@@ -27,17 +33,16 @@ def _make_sample_data(index: int) -> dict:
             "health": (50 + index) % 99,
             "prayer": (50 + index) % 85,
             "sessionTickCount": index,
-            "x": 0 + index*10,
-            "y": 0 + index*10,
+            "x": 0 + index * 10,
+            "y": 0 + index * 10,
         },
         "event": "game-tick",
-        "timestamp": 1683158133517 + index*600,
-        "username": "jerome-o"
+        "timestamp": 1683158133517 + index * 600,
+        "username": "jerome-o",
     }
 
 
 def seed_forever():
-
     i = 0
     while True:
         try:
@@ -53,8 +58,8 @@ def seed_forever():
             time.sleep(0.6)
 
 
-
 if __name__ == "__main__":
     import logging
+
     logging.basicConfig(level=logging.INFO)
     seed_forever()
