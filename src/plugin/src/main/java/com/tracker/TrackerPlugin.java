@@ -251,11 +251,6 @@ public class TrackerPlugin extends Plugin {
 		// increment game tick count
 		tickCount++;
 
-		// only print every 100 ticks
-		if (tickCount % tickInterval != 0) {
-			return;
-		}
-
 		// send event data to server
 		// information and send that instead of the event
 		sendTelemetry(this.buildGameTickData(),
