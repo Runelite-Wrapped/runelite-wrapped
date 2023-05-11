@@ -8,6 +8,8 @@ import net.runelite.api.Client;
 import net.runelite.api.GameState;
 import net.runelite.api.Player;
 import net.runelite.api.Skill;
+import net.runelite.api.Actor;
+import net.runelite.api.Hitsplat;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.StatChanged;
@@ -123,13 +125,123 @@ class GameTickData {
 	}
 }
 
+class LocationData {
+	private int x;
+	private int y;
+
+	// constructor
+	public LocationData(int x, int y) {
+		this.x = x;
+		this.y = y;
+	}
+
+	// getters
+	public int getX() {
+		return x;
+	}
+
+	public int getY() {
+		return y;
+	}
+
+	// Static method to create a LocationData object from a LocalPoint object
+	public static LocationData fromLocalPoint(
+			LocalPoint localPoint) {
+		// get x and y coordinates
+		int x = localPoint.getX();
+		int y = localPoint.getY();
+
+		// return new LocationData object
+		return new LocationData(x, y);
+	}
+}
+
+class ActorData {
+	private String name;
+	private int combatLevel;
+	private LocationData location;
+
+	// constructor
+	public ActorData(String name, int combatLevel,
+			LocationData location) {
+		this.name = name;
+		this.combatLevel = combatLevel;
+		this.location = location;
+	}
+
+	// static method to create an ActorData object from an Actor object
+	public static ActorData fromActor(
+			Actor actor) {
+		// get name and combat level
+		String name = actor.getName();
+		int combatLevel = actor.getCombatLevel();
+
+		// get location
+		LocalPoint localPoint = actor
+				.getLocalLocation();
+		LocationData location = LocationData
+				.fromLocalPoint(localPoint);
+
+		// return new ActorData object
+		return new ActorData(name, combatLevel,
+				location);
+	}
+
+	// getters
+	public String getName() {
+		return name;
+	}
+
+	public int getCombatLevel() {
+		return combatLevel;
+	}
+
+	public LocationData getLocation() {
+		return location;
+	}
+}
+
+class HitsplatData {
+	private Hitsplat hitsplat;
+	private ActorData actor;
+
+	// constructor
+	public HitsplatData(Hitsplat hitsplat,
+			ActorData actor) {
+		this.hitsplat = hitsplat;
+		this.actor = actor;
+	}
+
+	// static method to create a HitsplatData object from a HitsplatApplied event
+	public static HitsplatData fromHitsplatApplied(
+			HitsplatApplied event) {
+		// get hitsplat and actor
+		Hitsplat hitsplat = event.getHitsplat();
+		Actor actor = event.getActor();
+		ActorData actorData = ActorData
+				.fromActor(actor);
+
+		// return new HitsplatData object
+		return new HitsplatData(hitsplat,
+				actorData);
+	}
+
+	// getters
+	public Hitsplat getHitsplat() {
+		return hitsplat;
+	}
+
+	public ActorData getActor() {
+		return actor;
+	}
+}
+
 @Slf4j
 @PluginDescriptor(name = "Runelite Tracker")
 public class TrackerPlugin extends Plugin {
 
 	// private game tick count
 	private int tickCount = 0;
-	private int tickInterval = 10;
 
 	@Inject
 	private Client client;
@@ -228,7 +340,9 @@ public class TrackerPlugin extends Plugin {
 	public void onHitsplatApplied(
 			HitsplatApplied event) {
 		// send event data to server
-		sendTelemetry(event,
+		sendTelemetry(
+				HitsplatData.fromHitsplatApplied(
+						event),
 				"hitsplat-applied");
 	}
 
