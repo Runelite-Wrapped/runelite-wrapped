@@ -355,6 +355,11 @@ public class TrackerPlugin extends Plugin {
 	@Subscribe()
 	public void onGrandExchangeOfferChanged(
 			GrandExchangeOfferChanged event) {
+
+		// TODO(j.swannack): the first time this fires after a user signs in, the local
+		// player is null and that causes errors (when trying to get the name), this
+		// should be fixed somehow.
+
 		// send event data to server
 		sendTelemetry(event,
 				"grand-exchange-offer-changed");
