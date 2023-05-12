@@ -30,119 +30,39 @@ import okhttp3.Response;
 import okhttp3.RequestBody;
 import okhttp3.MediaType;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
 // import IOException
 import java.io.IOException;
 
 // telemetry data class definition
+@Getter
+@RequiredArgsConstructor
 class TelemetryData {
-	// timestamp of the event
-	private long timestamp;
-
-	// event data
-	private Object data;
-
-	// player username
-	private String username;
-
-	private String event;
-
-	// constructor
-	public TelemetryData(Object data,
-			String username, String event) {
-		// set timestamp to current time
-		timestamp = System.currentTimeMillis();
-
-		// set data to the data passed in
-		this.data = data;
-		this.username = username;
-		this.event = event;
-	}
-
-	// getters
-	public long getTimestamp() {
-		return timestamp;
-	}
-
-	public Object getData() {
-		return data;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public String getEvent() {
-		return event;
-	}
+	private final long timestamp;
+	private final Object data;
+	private final String username;
+	private final String event;
 }
 
 // game tick data
+@Getter
+@RequiredArgsConstructor
 class GameTickData {
-
-	// variable definitions
-	private int x;
-	private int y;
-	private int health;
-	private int prayer;
-	private int energy;
-	private int sessionTickCount;
-
-	// constructor
-	public GameTickData(int x, int y,
-			int health, int prayer,
-			int energy, int sessionTickCount) {
-		this.x = x;
-		this.y = y;
-		this.health = health;
-		this.prayer = prayer;
-		this.energy = energy;
-		this.sessionTickCount = sessionTickCount;
-	}
-
-	// getters
-	public int getX() {
-		return x;
-	}
-
-	public int getY() {
-		return y;
-	}
-
-	public int getHealth() {
-		return health;
-	}
-
-	public int getPrayer() {
-		return prayer;
-	}
-
-	public int getEnergy() {
-		return energy;
-	}
-
-	public int getSessionTickCount() {
-		return sessionTickCount;
-	}
+	private final int x;
+	private final int y;
+	private final int health;
+	private final int prayer;
+	private final int energy;
+	private final int sessionTickCount;
 }
 
+@Getter
+@RequiredArgsConstructor
 class LocationData {
-	private int x;
-	private int y;
-
-	// constructor
-	public LocationData(int x, int y) {
-		this.x = x;
-		this.y = y;
-	}
-
-	// getters
-	public int getX() {
-		return x;
-	}
-
-	public int getY() {
-		return y;
-	}
+	private final int x;
+	private final int y;
 
 	// Static method to create a LocationData object from a LocalPoint object
 	public static LocationData fromLocalPoint(
@@ -156,18 +76,12 @@ class LocationData {
 	}
 }
 
+@Getter
+@RequiredArgsConstructor
 class ActorData {
-	private String name;
-	private int combatLevel;
-	private LocationData location;
-
-	// constructor
-	public ActorData(String name, int combatLevel,
-			LocationData location) {
-		this.name = name;
-		this.combatLevel = combatLevel;
-		this.location = location;
-	}
+	private final String name;
+	private final int combatLevel;
+	private final LocationData location;
 
 	// static method to create an ActorData object from an Actor object
 	public static ActorData fromActor(
@@ -186,31 +100,13 @@ class ActorData {
 		return new ActorData(name, combatLevel,
 				location);
 	}
-
-	// getters
-	public String getName() {
-		return name;
-	}
-
-	public int getCombatLevel() {
-		return combatLevel;
-	}
-
-	public LocationData getLocation() {
-		return location;
-	}
 }
 
+@Getter
+@RequiredArgsConstructor
 class HitsplatData {
-	private Hitsplat hitsplat;
-	private ActorData actor;
-
-	// constructor
-	public HitsplatData(Hitsplat hitsplat,
-			ActorData actor) {
-		this.hitsplat = hitsplat;
-		this.actor = actor;
-	}
+	private final Hitsplat hitsplat;
+	private final ActorData actor;
 
 	// static method to create a HitsplatData object from a HitsplatApplied event
 	public static HitsplatData fromHitsplatApplied(
@@ -224,15 +120,6 @@ class HitsplatData {
 		// return new HitsplatData object
 		return new HitsplatData(hitsplat,
 				actorData);
-	}
-
-	// getters
-	public Hitsplat getHitsplat() {
-		return hitsplat;
-	}
-
-	public ActorData getActor() {
-		return actor;
 	}
 }
 
@@ -295,8 +182,9 @@ public class TrackerPlugin extends Plugin {
 
 		// create a new telemetry data object
 		TelemetryData telemetryData = new TelemetryData(
-				event, client.getLocalPlayer()
-						.getName(),
+				System.currentTimeMillis(),
+				event,
+				client.getLocalPlayer().getName(),
 				eventName);
 
 		// define and object mapper
