@@ -349,7 +349,7 @@ public class TrackerPlugin extends Plugin {
 	@Subscribe()
 	public void onActorDeath(ActorDeath event) {
 		// send event data to server
-		sendTelemetry(event, "actor-death");
+		sendTelemetry(ActorData.fromActor(event.getActor()), "actor-death");
 	}
 
 	@Subscribe()
