@@ -101,7 +101,7 @@ _URL = f"http://{SERVER_IP}:8000/api/v1/event/game-tick/"
 #   }
 
 
-def _make_sample_data(index: int) -> dict:
+def _make_sample_game_tick_data(index: int) -> dict:
     # use the index to make a unique sample
     return {
         "data": {
@@ -118,11 +118,94 @@ def _make_sample_data(index: int) -> dict:
     }
 
 
+def _make_sample_stat_changed_data(index: int) -> dict:
+    # use the index to make a unique sample
+    return {
+        "data": {
+            "boostedLevel": (50 + index) % 99,
+            "level": (50 + index) % 99,
+            "skill": "ATTACK",
+            "xp": 21245442 + index * 100,
+        },
+        "event": "stat-changed",
+        "timestamp": 1683158133517 + index * 600,
+        "username": "jerome-o",
+    }
+
+
+def _make_sample_grand_exchange_offer_changed_data(index: int) -> dict:
+    # use the index to make a unique sample
+    return {
+        "data": {
+            "offer": {
+                "ab": index,
+                "ac": index,
+                "an": index,
+                "au": index,
+                "aw": index,
+                "itemId": index,
+                "price": index,
+                "quantitySold": index,
+                "spent": 0,
+                "state": "EMPTY",
+                "totalQuantity": 0,
+            },
+            "slot": 0,
+        },
+        "event": "grand-exchange-offer-changed",
+        "timestamp": 1683158133517 + index * 600,
+        "username": "jerome-o",
+    }
+
+
+def _make_sample_hitsplat_applied_data(index: int) -> dict:
+    # use the index to make a unique sample
+    return {
+        "data": {
+            "actor": {
+                "combatLevel": (50 + index) % 126,
+                "location": {
+                    "x": 100 + index * 10,
+                    "y": 100 + index * 10,
+                },
+                "name": "jerome-o",
+            },
+            "hitsplat": {
+                "amount": 10,
+                "disappearsOnGameCycle": 4666,
+                "hitsplatType": 16,
+                "mine": True,
+                "others": False,
+            },
+        },
+        "event": "hitsplat-applied",
+        "timestamp": 1683158133517 + index * 600,
+        "username": "jerome-o",
+    }
+
+
+def _make_sample_actor_death_data(index: int) -> dict:
+    # use the index to make a unique sample
+    return {
+        "data": {
+            "combatLevel": (50 + index) % 126,
+            "location": {
+                "x": 100 + index * 10,
+                "y": 100 + index * 10,
+            },
+            "name": "jerome-o",
+        },
+        "event": "actor-death",
+        "timestamp": 1683158133517 + index * 600,
+        "username": "jerome-o",
+    }
+
+
 def seed_forever():
     i = 0
     while True:
         try:
-            sample = _make_sample_data(i)
+            sample = _make_sample_game_tick_data(i)
             response = requests.post(_URL, json=sample)
             print(response.status_code)
             print(response.text)
