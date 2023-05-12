@@ -9,7 +9,7 @@ SERVER_IP = os.environ["SERVER_IP"]
 
 _URL = f"http://{SERVER_IP}:8000/api/v1/event/game-tick/"
 
-# Example data:
+# Example tick data:
 # {
 #     "data": {
 #         "energy": 10000,
@@ -23,6 +23,82 @@ _URL = f"http://{SERVER_IP}:8000/api/v1/event/game-tick/"
 #     "timestamp": 1683158133517,
 #     "username": "jerome-o"
 # }
+
+# Example stat-changed data:
+#   {
+#     "data": {
+#       "boostedLevel": 99,
+#       "level": 99,
+#       "skill": "ATTACK",
+#       "xp": 21245442
+#     },
+#     "event": "stat-changed",
+#     "timestamp": 1683933323624,
+#     "username": "jerome-o"
+#   }
+
+# Example grand-exchange-offer-changed
+#   {
+#     "data": {
+#       "offer": {
+#         "ab": 0,
+#         "ac": 0,
+#         "an": 0,
+#         "au": 0,
+#         "aw": 0,
+#         "itemId": 0,
+#         "price": 0,
+#         "quantitySold": 0,
+#         "spent": 0,
+#         "state": "EMPTY",
+#         "totalQuantity": 0
+#       },
+#       "slot": 0
+#     },
+#     "event": "grand-exchange-offer-changed",
+#     "timestamp": 1683933323845,
+#     "username": "jerome-o"
+#   }
+
+
+# Example hitsplat-applied data:
+#   {
+#     "data": {
+#       "actor": {
+#         "combatLevel": 124,
+#         "location": {
+#           "x": 6464,
+#           "y": 6848
+#         },
+#         "name": "jerome-o"
+#       },
+#       "hitsplat": {
+#         "amount": 10,
+#         "disappearsOnGameCycle": 4666,
+#         "hitsplatType": 16,
+#         "mine": true,
+#         "others": false
+#       }
+#     },
+#     "event": "hitsplat-applied",
+#     "timestamp": 1683933378913,
+#     "username": "jerome-o"
+#   }
+
+# Example actor-death data:
+#   {
+#     "data": {
+#       "combatLevel": 124,
+#       "location": {
+#         "x": 6464,
+#         "y": 6720
+#       },
+#       "name": "jerome-o"
+#     },
+#     "event": "actor-death",
+#     "timestamp": 1683933389115,
+#     "username": "jerome-o"
+#   }
 
 
 def _make_sample_data(index: int) -> dict:
