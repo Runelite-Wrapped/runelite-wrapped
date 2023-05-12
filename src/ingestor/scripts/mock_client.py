@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 load_dotenv()
 SERVER_IP = os.environ["SERVER_IP"]
 
-_URL = f"http://{SERVER_IP}:8000/api/v1/event/game-tick/"
+_URL = f"http://{SERVER_IP}:8000/api/v1/event"
 
 # Example tick data:
 # {
@@ -201,20 +201,30 @@ def _make_sample_actor_death_data(index: int) -> dict:
     }
 
 
+_SAMPLE_DATA_FUNCTION_DICT = {
+    "game-tick": _make_sample_game_tick_data,
+    "stat-changed": _make_sample_stat_changed_data,
+    "grand-exchange-offer-changed": _make_sample_grand_exchange_offer_changed_data,
+    "hitsplat-applied": _make_sample_hitsplat_applied_data,
+    "actor-death": _make_sample_actor_death_data,
+}
+
+
 def seed_forever():
     i = 0
     while True:
-        try:
-            sample = _make_sample_game_tick_data(i)
-            response = requests.post(_URL, json=sample)
-            print(response.status_code)
-            print(response.text)
-            i += 1
-            time.sleep(0.6)
+        for event in _SAMPLE_DATA_FUNCTION_DICT.keys():
+            try:
+                sample = _SAMPLE_DATA_FUNCTION_DICT[event](i)
+                endpoint = f"{_URL}/{event}/"
+                response = requests.post(endpoint, json=sample)
+                print(f"{i}, {event}: {response.text}, {response.status_code}")
 
-        except Exception as e:
-            print(f"Exception encountered {e}")
-            time.sleep(0.6)
+            except Exception as e:
+                print(f"Exception encountered {e}")
+
+        i += 1
+        time.sleep(0.6)
 
 
 if __name__ == "__main__":
