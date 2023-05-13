@@ -12,7 +12,6 @@ body {
     margin: 0px;
     height: 500px;
     width: 500px;
-    background-color: rgba(255, 255, 255, 0.05);
     /* center content */
     align-items: center;
     justify-content: center;
@@ -23,7 +22,6 @@ body {
     /* allow children to stack */
     position: absolute;
     height: 100%;
-    background-color: rgba(255, 255, 255, 0.05);
 }
 
 .stat-inner-image {
@@ -36,8 +34,49 @@ body {
     overflow-wrap: normal;
     /* center text horizonally and vertically */
     text-align: center;
-    background-color: rgba(255, 255, 255, 0.05);
     width: 50%;
+}
+
+
+@keyframes slideInLeft {
+    0% {
+        opacity: 0;
+        transform: translateX(-100px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    0% {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInBottom {
+    0% {
+        opacity: 0;
+        transform: translateY(100px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate--slow {
+    animation-duration: 1s;
+}
+
+.animate--delay {
+    animation-delay: 1s;
 }
 
 .stat-text {
@@ -46,10 +85,13 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    animation-name: slideInBottom;
+    animation-fill-mode: both;
 }
 
 .right-image {
     right: 0px;
+    animation-name: slideInRight;
 }
 
 .flip {
@@ -58,4 +100,5 @@ body {
 
 .left-image {
     left: 0px;
+    animation-name: slideInLeft;
 }
