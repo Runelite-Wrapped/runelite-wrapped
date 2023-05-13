@@ -1,0 +1,61 @@
+body {
+    /* just here to make working on it easier */
+    background-color: black;
+    margin-top: 10vh;
+    display: grid;
+    place-items: center;
+}
+
+
+.stat-container {
+    /* allow children to stack */
+    margin: 0px;
+    height: 500px;
+    width: 500px;
+    background-color: rgba(255, 255, 255, 0.05);
+    /* center content */
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.stat-item {
+    /* allow children to stack */
+    position: absolute;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.stat-inner-image {
+    height: 100%;
+}
+
+.stat-inner-text {
+    margin: 0px;
+    color: white;
+    overflow-wrap: normal;
+    /* center text horizonally and vertically */
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.05);
+    width: 50%;
+}
+
+.stat-text {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.right-image {
+    right: 0px;
+}
+
+.flip {
+    transform: scaleX(-1);
+}
+
+.left-image {
+    left: 0px;
+}
