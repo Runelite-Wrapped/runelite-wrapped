@@ -2,6 +2,31 @@
 
 This will contain the Frontend (FE) and Backend (BE) for the final website that users will go to to see their Runelite Wrapped slide show!
 
-The frontend will likely be written in react or vue.js (definitely with typescript)
+## FE
 
-The backend will likely be written in python with FastAPI (for additional python learning)
+Frontend is located at [fe](./fe)
+
+It is written using Vue.js 3 and TypeScript
+
+## Setup
+
+You will need to install nodejs and npm
+
+To install dependencies, `cd` into the fe folder and run:
+```sh
+npm install
+```
+
+To run a development server run:
+```sh
+npm run serve
+```
+
+
+## BE
+
+TODO
+
+Will be located in [be](./be)
+
+Will be written in python using FastAPI
