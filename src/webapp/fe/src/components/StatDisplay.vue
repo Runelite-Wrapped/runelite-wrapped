@@ -39,8 +39,8 @@ body {
 .stat-container {
   /* allow children to stack */
   margin: 0px;
-  height: 500px;
-  width: 800px;
+  height: 40vmin;
+  width: 80vmin;
   /* center content */
   align-items: center;
   justify-content: center;
@@ -58,6 +58,7 @@ body {
 }
 
 .stat-inner-text {
+  font-size: 3vmin;
   padding: 10px;
   color: black;
   overflow-wrap: normal;
