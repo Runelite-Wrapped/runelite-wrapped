@@ -5,8 +5,8 @@
     </div>
   </div>
   <div class="button-panel">
-    <button @click="prev">Prev</button>
-    <button @click="next">Next</button>
+    <button @click="prev"><font-awesome-icon icon="left-long" /></button>
+    <button @click="next"><font-awesome-icon icon="right-long" /></button>
   </div>
 </template>
 
