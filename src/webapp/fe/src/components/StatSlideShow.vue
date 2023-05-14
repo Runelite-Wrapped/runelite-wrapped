@@ -16,11 +16,21 @@ import StatDisplay from "@/components/StatDisplay.vue";
 let stats = [
   {
     image: "https://oldschool.runescape.wiki/images/Hans.png?1a5c5",
-    text: "You've played for:<br />100 hours",
+    text: "You've played for:<br /> 2080 hours<br />That's a full working year!",
   },
   {
     image: "https://oldschool.runescape.wiki/images/Goblin.png?3e49a",
-    text: "Your most killed mob is:<br />Goblin",
+    text: "Your most killed mob is:<br />Goblin (lvl 3)<br />with 42069 kills!",
+  },
+  {
+    image:
+      "https://oldschool.runescape.wiki/images/Grand_Exchange_pillar.png?90523",
+    text: "Your favourite location is:<br />The Grand Exchange<br />with 703 visits<br />and 803 hours spent there",
+  },
+  {
+    image:
+      "https://oldschool.runescape.wiki/images/Rock_golem_%28follower%29.png?269fc",
+    text: "Your favourite skill is:<br />Mining<br />with 42069 xp gained",
   },
 ];
 

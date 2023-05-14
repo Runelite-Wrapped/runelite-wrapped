@@ -40,7 +40,7 @@ body {
   /* allow children to stack */
   margin: 0px;
   height: 500px;
-  width: 500px;
+  width: 800px;
   /* center content */
   align-items: center;
   justify-content: center;
