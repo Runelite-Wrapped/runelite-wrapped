@@ -67,6 +67,7 @@ body {
   width: 50%;
   background-color: rgba(255, 255, 255, 0.9);
   border-radius: 10px;
+  border: 0.5vmin solid rgb(0, 0, 0);
 }
 
 @keyframes slideInLeft {
