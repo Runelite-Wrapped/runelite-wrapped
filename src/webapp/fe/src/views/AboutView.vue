@@ -1,5 +1,10 @@
 <template>
   <div class="about">
+    <img
+      alt="Vue logo"
+      src="../assets/runelite_wrapped_icon_wide.png"
+      class="top-image"
+    />
     <h1>Runelite Wrapped</h1>
     <p>
       Runelite Wrapped is an open source app that provide OSRS users (who play
@@ -34,10 +39,15 @@
 .about {
   display: grid;
   place-items: center;
-  margin-top: 10vh;
+  margin-top: 1vh;
   width: 50%;
   /* make centered on page */
   margin-left: auto;
   margin-right: auto;
+}
+.top-image {
+  width: 40%;
+  top: 0;
+  left: 0;
 }
 </style>
