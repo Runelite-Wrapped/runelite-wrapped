@@ -1,5 +1,6 @@
 # Runelite Wrapped
-An example greeter plugin
+
+A runelite plugin that sends event data to the runelite-wrapped api, with the purpose of allowing for the creation of a "Spotify Wrapped" style slide show.
 
 ## vscode setup
 
