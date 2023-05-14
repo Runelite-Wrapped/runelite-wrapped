@@ -67,8 +67,24 @@ export default defineComponent({
 }
 
 .button-panel {
+  width: 50%;
   display: flex;
   justify-content: center;
-  background-color: rgba(0, 0, 0, 0.5);
+  margin-top: 8vmin;
+  display: flex;
+  justify-content: space-around;
+}
+
+.button-panel > button {
+  background-color: transparent;
+  border: 0.4vmin solid rgb(0, 0, 0);
+  border-radius: 100%;
+  font-size: 5vmin;
+  color: black;
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 2.5vmin;
+  height: 7vmin;
+  width: 7vmin;
 }
 </style>
