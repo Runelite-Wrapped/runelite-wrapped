@@ -25,7 +25,7 @@ let stats = [
   {
     image:
       "https://oldschool.runescape.wiki/images/Grand_Exchange_pillar.png?90523",
-    text: "Your favourite location is:<br />The Grand Exchange<br />with 703 visits<br />and 803 hours spent there",
+    text: "Your favourite location is:<br />The Grand Exchange<br />with 703 visits<br />Totalling 803 hours!",
   },
   {
     image:

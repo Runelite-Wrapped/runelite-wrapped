@@ -58,12 +58,14 @@ body {
 }
 
 .stat-inner-text {
-  margin: 0px;
+  padding: 10px;
   color: black;
   overflow-wrap: normal;
   /* center text horizonally and vertically */
   text-align: center;
   width: 50%;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
 }
 
 @keyframes slideInLeft {
