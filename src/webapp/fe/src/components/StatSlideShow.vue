@@ -4,8 +4,10 @@
       <StatDisplay :stat="stats[current]" :key="current" />
     </div>
   </div>
-  <button @click="next">Next</button>
-  <button @click="prev">Prev</button>
+  <div class="button-panel">
+    <button @click="prev">Prev</button>
+    <button @click="next">Next</button>
+  </div>
 </template>
 
 <script lang="ts">
@@ -62,5 +64,11 @@ export default defineComponent({
   align-items: center;
   justify-content: center;
   position: relative;
+}
+
+.button-panel {
+  display: flex;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
 }
 </style>
