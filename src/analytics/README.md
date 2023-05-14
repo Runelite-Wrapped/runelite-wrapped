@@ -22,3 +22,9 @@ In the extract step:
     * example: count the total number of deaths
 * Load your processed data back into the mongo instance
     * example: store your death count in a new mongodb "collection" with some metadata like `"calculated_date"` or something.
+
+## Early DAG Ideas
+
+* Stat calculation for individual users
+* Building the Stat -> image map (i.e. what image to display for each mob in the "Most killed mob" stat)
+* OSRS Hiscores scraping
