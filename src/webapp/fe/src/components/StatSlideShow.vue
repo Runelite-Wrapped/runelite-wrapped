@@ -77,14 +77,14 @@ export default defineComponent({
 
 .button-panel > button {
   background-color: transparent;
-  border: 0.4vmin solid rgb(0, 0, 0);
+  border: 0.5vmin solid rgb(0, 0, 0);
   border-radius: 100%;
   font-size: 5vmin;
   color: black;
   cursor: pointer;
   transition: 0.3s;
-  font-size: 2.5vmin;
-  height: 7vmin;
-  width: 7vmin;
+  font-size: 5vmin;
+  height: 15vmin;
+  width: 15vmin;
 }
 </style>
