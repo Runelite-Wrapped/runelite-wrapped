@@ -6,19 +6,19 @@
       class="top-image"
     />
     <div class="main-container">
-      <StatDisplay />
+      <StatSlideShow />
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import StatDisplay from "@/components/StatDisplay.vue";
+import StatSlideShow from "@/components/StatSlideShow.vue";
 
 export default defineComponent({
   name: "HomeView",
   components: {
-    StatDisplay,
+    StatSlideShow,
   },
 });
 </script>

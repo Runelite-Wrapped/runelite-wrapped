@@ -1,28 +1,29 @@
 <template>
   <div class="stat-container">
     <div class="stat-item left-image animate--slow">
-      <img
-        src="https://oldschool.runescape.wiki/images/Hans.png?1a5c5"
-        class="flip stat-inner-image"
-      />
+      <img :src="stat.image" class="flip stat-inner-image" />
     </div>
     <div class="stat-item right-image animate--slow">
-      <img
-        src="https://oldschool.runescape.wiki/images/Hans.png?1a5c5"
-        class="stat-inner-image"
-      />
+      <img :src="stat.image" class="stat-inner-image" />
     </div>
     <div class="stat-item stat-text animate--slow animate--delay">
-      <h1 class="stat-inner-text">You've played for:<br />100 hours</h1>
+      <h1 class="stat-inner-text" v-html="stat.text"></h1>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { StatData } from "@/models";
 
 export default defineComponent({
   name: "StatDisplay",
+  props: {
+    stat: {
+      type: Object as () => StatData,
+      required: true,
+    },
+  },
 });
 </script>
 

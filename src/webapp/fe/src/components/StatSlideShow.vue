@@ -1,7 +1,7 @@
 <template>
   <div class="slide-show-container">
     <div class="stat-container">
-      <StatDisplay />
+      <StatDisplay :stat="stats[current]" />
     </div>
   </div>
   <button @click="next">Next</button>
@@ -32,14 +32,15 @@ export default defineComponent({
   data() {
     return {
       current: 0,
+      stats: stats,
     };
   },
   methods: {
     next() {
-      this.current++;
+      this.current = (this.current + 1) % this.stats.length;
     },
     prev() {
-      this.current--;
+      this.current = (this.current - 1 + this.stats.length) % this.stats.length;
     },
   },
 });
