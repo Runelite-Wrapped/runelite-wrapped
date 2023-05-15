@@ -1,13 +1,14 @@
 import requests
+import zipfile
 import pandas as pd
+import urllib.request
 import base64
+import csv
 from io import BytesIO
 
 import matplotlib.pyplot as plt
 
 from dagster import (
-    AssetKey,
-    DagsterInstance,
     MetadataValue,
     Output,
     asset,
@@ -18,14 +19,38 @@ from dagster import (
 _logger = get_dagster_logger()
 
 
-@asset
+@asset(
+    group_name="hackernews",
+)
+def stopwords_zip() -> None:
+    urllib.request.urlretrieve(
+        "https://docs.dagster.io/assets/stopwords.zip",
+        "data/stopwords.zip",
+    )
+
+
+@asset(
+    non_argument_deps={"stopwords_zip"},
+    group_name="hackernews",
+)
+def stopwords_csv() -> None:
+    with zipfile.ZipFile("data/stopwords.zip", "r") as zip_ref:
+        zip_ref.extractall("data")
+
+
+@asset(
+    group_name="hackernews",
+)
 def topstory_ids():
     newstories_url = "https://hacker-news.firebaseio.com/v0/topstories.json"
     top_new_story_ids = requests.get(newstories_url).json()[:100]
     return top_new_story_ids
 
 
-@asset
+@asset(
+    group_name="hackernews",
+    io_manager_key="database_io_manager",
+)
 def topstories(topstory_ids):
     logger = get_dagster_logger()
 
@@ -51,9 +76,13 @@ def topstories(topstory_ids):
     )
 
 
-@asset
+@asset(
+    group_name="hackernews",
+    non_argument_deps={"stopwords_csv"},
+)
 def most_frequent_words(topstories):
-    stopwords = ["a", "the", "an", "of", "to", "in", "for", "and", "with", "on", "is"]
+    with open("data/stopwords.csv", "r") as f:
+        stopwords = {row[0] for row in csv.reader(f)}
 
     # loop through the titles and count the frequency of each word
     word_counts = {}
