@@ -4,6 +4,9 @@ data/
 
 tmp*/
 
+.env*
+!.env.example
+
 # Java
 .gradle
 build
