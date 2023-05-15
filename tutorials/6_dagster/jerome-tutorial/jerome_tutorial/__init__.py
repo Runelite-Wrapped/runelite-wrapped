@@ -22,7 +22,7 @@ hackernews_schedule = ScheduleDefinition(
 )
 
 io_manager = FilesystemIOManager(base_dir="data")
-database_io_manager = DuckDBPandasIOManager(database="analytics.hackernews")
+database_io_manager = DuckDBPandasIOManager(database="data/analytics.hackernews")
 
 defs = Definitions(
     assets=all_assets,
