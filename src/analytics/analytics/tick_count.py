@@ -2,9 +2,7 @@ import os
 import time
 
 from dotenv import load_dotenv
-from fastapi import FastAPI
 from pymongo import MongoClient
-from pydantic import BaseModel
 
 load_dotenv()
 
