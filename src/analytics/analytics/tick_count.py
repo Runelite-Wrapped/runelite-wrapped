@@ -3,6 +3,7 @@ import time
 
 from dotenv import load_dotenv
 from pymongo import MongoClient
+from analytics.helpers import get_all_usernames
 
 load_dotenv()
 
@@ -30,7 +31,10 @@ def pull_game_tick_data(username: str):
 
 
 def main():
-    pull_game_tick_data("jerome-o")
+    usernames = get_all_usernames(client)
+    for username in usernames:
+        pull_game_tick_data(username)
+    # pull_game_tick_data("jerome-o")
 
 
 if __name__ == "__main__":

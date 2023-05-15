@@ -9,6 +9,7 @@ SERVER_IP = os.environ["SERVER_IP"]
 
 _URL = f"http://{SERVER_IP}:8000/api/v1/event"
 
+_USERNAME = "shupwup"
 # Example tick data:
 # {
 #     "data": {
@@ -21,7 +22,7 @@ _URL = f"http://{SERVER_IP}:8000/api/v1/event"
 #     },
 #     "event": "game-tick",
 #     "timestamp": 1683158133517,
-#     "username": "jerome-o"
+#     "username": _USERNAME
 # }
 
 # Example stat-changed data:
@@ -34,7 +35,7 @@ _URL = f"http://{SERVER_IP}:8000/api/v1/event"
 #     },
 #     "event": "stat-changed",
 #     "timestamp": 1683933323624,
-#     "username": "jerome-o"
+#     "username": _USERNAME
 #   }
 
 # Example grand-exchange-offer-changed
@@ -57,7 +58,7 @@ _URL = f"http://{SERVER_IP}:8000/api/v1/event"
 #     },
 #     "event": "grand-exchange-offer-changed",
 #     "timestamp": 1683933323845,
-#     "username": "jerome-o"
+#     "username": _USERNAME
 #   }
 
 
@@ -70,7 +71,7 @@ _URL = f"http://{SERVER_IP}:8000/api/v1/event"
 #           "x": 6464,
 #           "y": 6848
 #         },
-#         "name": "jerome-o"
+#         "name": _USERNAME
 #       },
 #       "hitsplat": {
 #         "amount": 10,
@@ -82,7 +83,7 @@ _URL = f"http://{SERVER_IP}:8000/api/v1/event"
 #     },
 #     "event": "hitsplat-applied",
 #     "timestamp": 1683933378913,
-#     "username": "jerome-o"
+#     "username": _USERNAME
 #   }
 
 # Example actor-death data:
@@ -93,11 +94,11 @@ _URL = f"http://{SERVER_IP}:8000/api/v1/event"
 #         "x": 6464,
 #         "y": 6720
 #       },
-#       "name": "jerome-o"
+#       "name": _USERNAME
 #     },
 #     "event": "actor-death",
 #     "timestamp": 1683933389115,
-#     "username": "jerome-o"
+#     "username": _USERNAME
 #   }
 
 
@@ -114,7 +115,7 @@ def _make_sample_game_tick_data(index: int) -> dict:
         },
         "event": "game-tick",
         "timestamp": 1683158133517 + index * 600,
-        "username": "jerome-o",
+        "username": _USERNAME,
     }
 
 
@@ -129,7 +130,7 @@ def _make_sample_stat_changed_data(index: int) -> dict:
         },
         "event": "stat-changed",
         "timestamp": 1683158133517 + index * 600,
-        "username": "jerome-o",
+        "username": _USERNAME,
     }
 
 
@@ -154,7 +155,7 @@ def _make_sample_grand_exchange_offer_changed_data(index: int) -> dict:
         },
         "event": "grand-exchange-offer-changed",
         "timestamp": 1683158133517 + index * 600,
-        "username": "jerome-o",
+        "username": _USERNAME,
     }
 
 
@@ -168,7 +169,7 @@ def _make_sample_hitsplat_applied_data(index: int) -> dict:
                     "x": 100 + index * 10,
                     "y": 100 + index * 10,
                 },
-                "name": "jerome-o",
+                "name": _USERNAME,
             },
             "hitsplat": {
                 "amount": 10,
@@ -180,7 +181,7 @@ def _make_sample_hitsplat_applied_data(index: int) -> dict:
         },
         "event": "hitsplat-applied",
         "timestamp": 1683158133517 + index * 600,
-        "username": "jerome-o",
+        "username": _USERNAME,
     }
 
 
@@ -193,11 +194,11 @@ def _make_sample_actor_death_data(index: int) -> dict:
                 "x": 100 + index * 10,
                 "y": 100 + index * 10,
             },
-            "name": "jerome-o",
+            "name": _USERNAME,
         },
         "event": "actor-death",
         "timestamp": 1683158133517 + index * 600,
-        "username": "jerome-o",
+        "username": _USERNAME,
     }
 
 
