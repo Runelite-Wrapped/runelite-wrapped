@@ -129,24 +129,24 @@ async def game_tick(event: GameEventData):
 
 
 @app.post("/api/v1/event/stat-changed")
-async def game_tick(event: StatChangedEvent):
+async def stat_change(event: StatChangedEvent):
     stat_changed_collection.insert_one(event.dict())
     return {"message": "OK"}
 
 
 @app.post("/api/v1/event/grand-exchange-offer-changed")
-async def game_tick(event: GrandExchangeOfferChangedEvent):
+async def grand_exchange_offer_change(event: GrandExchangeOfferChangedEvent):
     grand_exchange_offer_changed_collection.insert_one(event.dict())
     return {"message": "OK"}
 
 
 @app.post("/api/v1/event/hitsplat-applied")
-async def game_tick(event: HitsplatAppliedEvent):
+async def hitsplat_applied(event: HitsplatAppliedEvent):
     hitsplat_applied_collection.insert_one(event.dict())
     return {"message": "OK"}
 
 
 @app.post("/api/v1/event/actor-death")
-async def game_tick(event: ActorDeathEvent):
+async def actor_death(event: ActorDeathEvent):
     actor_death_collection.insert_one(event.dict())
     return {"message": "OK"}
