@@ -30,7 +30,7 @@ def calculate_tick_count(username: str):
     total_tick_collection.insert_one(output)
 
 
-def main():
+def calculate_all_user_tick_counts():
     usernames = get_all_usernames(client)
     for username in usernames:
         calculate_tick_count(username)
@@ -41,4 +41,4 @@ if __name__ == "__main__":
     import logging
 
     logging.basicConfig(level=logging.INFO)
-    main()
+    calculate_all_user_tick_counts()
