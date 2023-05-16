@@ -31,25 +31,11 @@ class GameTickData(BaseModel):
     y: int
 
 
-class GameEventData(BaseModel):
-    data: GameTickData
-    event: str
-    timestamp: int
-    username: str
-
-
 class StatChangedData(BaseModel):
     boostedLevel: int
     level: int
     skill: str
     xp: int
-
-
-class StatChangedEvent(BaseModel):
-    data: StatChangedData
-    event: str
-    timestamp: int
-    username: str
 
 
 class OfferData(BaseModel):
@@ -69,13 +55,6 @@ class OfferData(BaseModel):
 class GrandExchangeOfferData(BaseModel):
     offer: OfferData
     slot: int
-
-
-class GrandExchangeOfferChangedEvent(BaseModel):
-    data: GrandExchangeOfferData
-    event: str
-    timestamp: int
-    username: str
 
 
 class LocationData(BaseModel):
@@ -102,28 +81,40 @@ class HitsplatAppliedData(BaseModel):
     hitsplat: HitsplatData
 
 
-class HitsplatAppliedEvent(BaseModel):
-    data: HitsplatAppliedData
-    event: str
-    timestamp: int
-    username: str
-
-
 class ActorDeathData(BaseModel):
     combatLevel: int
     location: LocationData
     name: str
 
 
-class ActorDeathEvent(BaseModel):
-    data: ActorDeathData
+class GameEventBase(BaseModel):
     event: str
     timestamp: int
     username: str
 
 
+class GameTickEvent(GameEventBase):
+    data: GameTickData
+
+
+class StatChangedEvent(GameEventBase):
+    data: StatChangedData
+
+
+class GrandExchangeOfferChangedEvent(GameEventBase):
+    data: GrandExchangeOfferData
+
+
+class HitsplatAppliedEvent(GameEventBase):
+    data: HitsplatAppliedData
+
+
+class ActorDeathEvent(GameEventBase):
+    data: ActorDeathData
+
+
 @app.post("/api/v1/event/game-tick/")
-async def game_tick(event: GameEventData):
+async def game_tick(event: GameTickEvent):
     game_tick_collection.insert_one(event.dict())
     return {"message": "OK"}
 
