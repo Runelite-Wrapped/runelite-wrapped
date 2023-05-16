@@ -217,7 +217,7 @@ def seed_forever():
         for event in _SAMPLE_DATA_FUNCTION_DICT.keys():
             try:
                 sample = _SAMPLE_DATA_FUNCTION_DICT[event](i)
-                endpoint = f"{_URL}/{event}/"
+                endpoint = f"{_URL}/{event}"
                 response = requests.post(endpoint, json=sample)
                 print(f"{i}, {event}: {response.text}, {response.status_code}")
 
