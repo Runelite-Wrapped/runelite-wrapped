@@ -14,8 +14,7 @@
 import { defineComponent } from "vue";
 import StatDisplay from "@/components/StatDisplay.vue";
 
-// TODO: get stats from backend
-let stats = [
+let defaultStats = [
   {
     image: "https://oldschool.runescape.wiki/images/Hans.png?1a5c5",
     text: "You've played for:<br /> 2080 hours<br />That's a full working year!",
@@ -35,6 +34,20 @@ let stats = [
     text: "Your favourite skill is:<br />Mining<br />with 42069 xp gained",
   },
 ];
+
+// pull stats from /api/v1/wrapped?username=jerome
+// if it fails, use default stats
+
+let stats = fetch("/api/v1/wrapped?username=jerome")
+  .then((response) => response.json())
+  .then((data) => {
+    console.log(data);
+    return data;
+  })
+  .catch((error) => {
+    console.error("Error:", error);
+    return defaultStats;
+  });
 
 export default defineComponent({
   name: "StatSlideShow",
