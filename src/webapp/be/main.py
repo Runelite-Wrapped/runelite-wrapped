@@ -26,4 +26,11 @@ _SAMPLE_DATA = [
 
 @app.get("/api/v1/wrapped")
 async def wrapped(username: str) -> list:
-    return _SAMPLE_DATA
+    # append username to each dict's text
+    return [
+        {
+            "image": item["image"],
+            "text": f"{username} {item['text']}",
+        }
+        for item in _SAMPLE_DATA
+    ]
