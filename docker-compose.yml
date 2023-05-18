@@ -20,6 +20,10 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - app-network
 
   mongo-express:
     image: mongo-express
@@ -34,11 +38,64 @@ services:
       ME_CONFIG_BASICAUTH_PASSWORD: ${MONGO_EXPRESS_PASSWORD}
     depends_on:
       - mongo
+    networks:
+      - app-network
 
   ingestor:
     build: src/ingestor
     restart: always
-    ports:
-      - 8000:8000
     environment:
       MONGO_URI: mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017/
+    networks:
+      - app-network
+    depends_on:
+      - mongo
+
+  # TODO: make dockerfile for analytics
+  analytics:
+    build: src/analytics
+    environment:
+      MONGO_URI: mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017/
+    networks:
+      - app-network
+    depends_on:
+      - mongo
+
+  # TODO: make dockerfile for backend
+  backend:
+    build: src/webapp/be
+    networks:
+      - app-network
+    depends_on:
+      - mongo
+
+  # TODO: make dockerfile for frontend
+  frontend:
+    build: src/webapp/fe
+    networks:
+      - app-network
+    depends_on:
+      - backend
+
+  nginx:
+    image: nginx:1.24.0
+    volumes:
+      # TODO: make nginx.conf
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - 80:80
+    networks:
+      - app-network
+    depends_on:
+      - frontend
+      - backend
+      - ingestor
+      - mongo-express
+
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mongo-data:
