@@ -38,17 +38,6 @@ let defaultStats = [
 // pull stats from /api/v1/wrapped?username=jerome
 // if it fails, use default stats
 
-let stats = fetch("/api/v1/wrapped?username=jerome")
-  .then((response) => response.json())
-  .then((data) => {
-    console.log(data);
-    return data;
-  })
-  .catch((error) => {
-    console.error("Error:", error);
-    return defaultStats;
-  });
-
 export default defineComponent({
   name: "StatSlideShow",
   components: {
@@ -57,7 +46,7 @@ export default defineComponent({
   data() {
     return {
       current: 0,
-      stats: stats,
+      stats: defaultStats,
     };
   },
   methods: {
@@ -67,6 +56,18 @@ export default defineComponent({
     prev() {
       this.current = (this.current - 1 + this.stats.length) % this.stats.length;
     },
+  },
+  async mounted() {
+    this.stats = await fetch("/api/v1/wrapped?username=jerome")
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        return data;
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        return defaultStats;
+      });
   },
 });
 </script>

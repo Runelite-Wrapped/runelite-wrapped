@@ -17,7 +17,8 @@ total_tick_collection = db_analytics.get_collection("tick_count")
 
 
 def calculate_tick_count(username: str):
-    # Pull all game tick data for a certain player (username) and Calculate / count the number of gameticks
+    # Pull all game tick data for a certain player (username) and Calculate / count the
+    # number of gameticks
     game_tick_count = game_tick_collection.count_documents({"username": username})
 
     # Push that to the analytics collection (analytics.total_ticks)
