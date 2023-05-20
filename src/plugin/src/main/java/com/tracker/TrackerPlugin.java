@@ -24,11 +24,7 @@ import net.runelite.client.plugins.PluginDescriptor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-import okhttp3.RequestBody;
-import okhttp3.MediaType;
+import okhttp3.*;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -207,10 +203,21 @@ public class TrackerPlugin extends Plugin {
 					url);
 
 			// send the request and handle IOException
-			Response response = okHttpClient
-					.newCall(request)
-					.execute();
-			response.close();
+			okHttpClient.newCall(request).enqueue(new Callback() {
+				@Override
+				public void onFailure(Call call, IOException e) {
+					e.printStackTrace();
+				}
+
+				@Override
+				public void onResponse(Call call, Response response) throws IOException {
+					try (ResponseBody responseBody = response.body()) {
+						if (!response.isSuccessful())
+							throw new IOException("Unexpected code " + response);
+						System.out.println(responseBody.string());
+					}
+				}
+			});
 
 		} catch (IOException e) {
 			e.printStackTrace();
