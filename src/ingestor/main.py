@@ -1,4 +1,5 @@
 import os
+from typing import List, Optional
 
 from dotenv import load_dotenv
 from fastapi import FastAPI
@@ -29,6 +30,7 @@ class GameTickData(BaseModel):
     sessionTickCount: int
     x: int
     y: int
+    equipmentIds: Optional[List[int]] = None
 
 
 class StatChangedData(BaseModel):

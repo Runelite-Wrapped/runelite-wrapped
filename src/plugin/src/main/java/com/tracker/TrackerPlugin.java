@@ -52,6 +52,7 @@ class GameTickData {
 	private final int prayer;
 	private final int energy;
 	private final int sessionTickCount;
+	private final int[] equipmentIds;
 }
 
 @Getter
@@ -276,6 +277,8 @@ public class TrackerPlugin extends Plugin {
 		// get player
 		Player player = client.getLocalPlayer();
 
+		int[] equipmentIds = player.getPlayerComposition().getEquipmentIds();
+
 		// get player location
 		LocalPoint localPoint = player
 				.getLocalLocation();
@@ -298,7 +301,7 @@ public class TrackerPlugin extends Plugin {
 		// create a new game tick data object
 		return new GameTickData(
 				x, y, health, prayer, energy,
-				tickCount);
+				tickCount, equipmentIds);
 
 	}
 
