@@ -23,13 +23,23 @@ actor_death_collection = db.get_collection("actor_death")
 app = FastAPI()
 
 
+class LocationData(BaseModel):
+    x: int
+    y: int
+    regionId: int
+
+
+class ActorData(BaseModel):
+    combatLevel: int
+    location: LocationData
+    name: str
+
 class GameTickData(BaseModel):
     energy: int
     health: int
     prayer: int
     sessionTickCount: int
-    x: int
-    y: int
+    location: LocationData
     equipmentIds: Optional[List[int]] = None
 
 
@@ -57,17 +67,6 @@ class OfferData(BaseModel):
 class GrandExchangeOfferData(BaseModel):
     offer: OfferData
     slot: int
-
-
-class LocationData(BaseModel):
-    x: int
-    y: int
-
-
-class ActorData(BaseModel):
-    combatLevel: int
-    location: LocationData
-    name: str
 
 
 class HitsplatData(BaseModel):
