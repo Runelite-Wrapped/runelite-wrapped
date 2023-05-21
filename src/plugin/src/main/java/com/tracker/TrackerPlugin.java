@@ -10,7 +10,7 @@ import net.runelite.api.Player;
 import net.runelite.api.Skill;
 import net.runelite.api.Actor;
 import net.runelite.api.Hitsplat;
-import net.runelite.api.coords.LocalPoint;
+import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.StatChanged;
 import net.runelite.api.events.HitsplatApplied;
@@ -46,13 +46,12 @@ class TelemetryData {
 @Getter
 @RequiredArgsConstructor
 class GameTickData {
-	private final int x;
-	private final int y;
 	private final int health;
 	private final int prayer;
 	private final int energy;
 	private final int sessionTickCount;
 	private final int[] equipmentIds;
+	private final LocationData location;
 }
 
 @Getter
@@ -60,16 +59,18 @@ class GameTickData {
 class LocationData {
 	private final int x;
 	private final int y;
+	private final int regionId;
 
 	// Static method to create a LocationData object from a LocalPoint object
-	public static LocationData fromLocalPoint(
-			LocalPoint localPoint) {
+	public static LocationData fromWorldPoint(
+			WorldPoint worldPoint) {
 		// get x and y coordinates
-		int x = localPoint.getX();
-		int y = localPoint.getY();
+		int x = worldPoint.getX();
+		int y = worldPoint.getY();
+		int regionId = worldPoint.getRegionID();
 
 		// return new LocationData object
-		return new LocationData(x, y);
+		return new LocationData(x, y, regionId);
 	}
 }
 
@@ -88,10 +89,10 @@ class ActorData {
 		int combatLevel = actor.getCombatLevel();
 
 		// get location
-		LocalPoint localPoint = actor
-				.getLocalLocation();
+		WorldPoint worldPoint = actor
+				.getWorldLocation();
 		LocationData location = LocationData
-				.fromLocalPoint(localPoint);
+				.fromWorldPoint(worldPoint);
 
 		// return new ActorData object
 		return new ActorData(name, combatLevel,
@@ -280,12 +281,10 @@ public class TrackerPlugin extends Plugin {
 		int[] equipmentIds = player.getPlayerComposition().getEquipmentIds();
 
 		// get player location
-		LocalPoint localPoint = player
-				.getLocalLocation();
-
-		// get player location
-		int x = localPoint.getX();
-		int y = localPoint.getY();
+		WorldPoint localPoint = player
+				.getWorldLocation();
+		LocationData location = LocationData
+				.fromWorldPoint(localPoint);
 
 		// get player health
 		int health = client.getBoostedSkillLevel(
@@ -300,8 +299,8 @@ public class TrackerPlugin extends Plugin {
 
 		// create a new game tick data object
 		return new GameTickData(
-				x, y, health, prayer, energy,
-				tickCount, equipmentIds);
+				health, prayer, energy,
+				tickCount, equipmentIds, location);
 
 	}
 
