@@ -142,3 +142,14 @@ async def hitsplat_applied(event: HitsplatAppliedEvent):
 async def actor_death(event: ActorDeathEvent):
     actor_death_collection.insert_one(event.dict())
     return {"message": "OK"}
+
+
+def main():
+    from uvicorn import run
+    run(app, host="0.0.0.0", port=8000)
+
+
+if __name__ == "__main__":
+    import logging
+    logging.basicConfig(level=logging.INFO)
+    main()
