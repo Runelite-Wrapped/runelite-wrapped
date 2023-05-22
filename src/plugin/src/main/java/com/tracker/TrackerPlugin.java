@@ -31,6 +31,7 @@ import lombok.RequiredArgsConstructor;
 
 // import IOException
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 // telemetry data class definition
 @Getter
