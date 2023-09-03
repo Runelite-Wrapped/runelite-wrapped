@@ -2,6 +2,15 @@
 
 This is a FastAPI (HTTP API) that receives POST requests from the runelite wrapped plugin containing event information from the current runelite session, and stores the data in a mongodb instance.
 
+## Overview
+
+Summary of information about this part of the project
+* This is an HTTP web service that should receive the telemetry form user's RuneLite RLW plugin
+* It currently uses a python HTTP framework called FastAPI
+  * FastAPI is a popular modern web framework that allows us to define API endpoints using type hints and Pydantic models (`BaseModel`).
+  * Pydantic will handle the JSON de/serialisation
+  * The whole service is contained in [this module](src/ingestor/main.py) for now. However we will probably want to centralise the model definitions so that the dagster pipelines can also access them.
+
 ## Setup required
 
 Copy the `.env.example` file and fill in the missing values
