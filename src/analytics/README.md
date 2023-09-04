@@ -66,7 +66,19 @@ This will set you up for this specific part of the project, when working elsewhe
 
 ## Running
 
+With the virtual environment activated you can run:
 
+```bash
+dagster dev -m analytics
+```
+
+And a local dagster instance will be spooled up, accessible by default from `localhost:3000` in your browser.
+
+Note you will need to have the MONGO_URI environment variable set, pointing to the mongoDB instance you want to read from and write to.
+
+For development I recommend setting up a local mongoDB instance using docker, and setting the MONGO_URI to `mongodb://localhost:27017/`.
+
+I have a data dump from our dev mongoDB instance that I can share with you to set up your local instance with some test data.
 
 ## Early DAG Ideas
 
