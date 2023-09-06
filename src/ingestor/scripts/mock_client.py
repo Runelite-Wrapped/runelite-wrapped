@@ -5,7 +5,7 @@ import requests
 from dotenv import load_dotenv
 
 load_dotenv()
-SERVER_IP = os.environ["SERVER_IP"]
+SERVER_IP = os.environ.get("SERVER_IP", "localhost")
 
 _URL = f"http://{SERVER_IP}:8000/api/v1/event"
 
