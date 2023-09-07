@@ -30,12 +30,18 @@ def calculate_tick_count(username: str):
 
     total_tick_collection.insert_one(output)
 
+    return output
+
 
 def calculate_all_user_tick_counts():
     usernames = get_all_usernames(client)
+    outputs = {}
+
     for username in usernames:
-        calculate_tick_count(username)
+        outputs[username] = calculate_tick_count(username)
     # pull_game_tick_data("jerome-o")
+
+    return outputs
 
 
 if __name__ == "__main__":
