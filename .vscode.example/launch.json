@@ -1,0 +1,32 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Ingestor",
+            "type": "python",
+            "request": "launch",
+            "program": "src/ingestor/main.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "envFile": "src/ingestor/.env"
+        },
+        {
+            "type": "java",
+            "name": "TrackerPluginTest",
+            "request": "launch",
+            "mainClass": "com.tracker.TrackerPluginTest",
+            "projectName": "tracker"
+        },
+        {
+            "type": "java",
+            "name": "RuneLiteWrapped",
+            "request": "launch",
+            "mainClass": "com.tracker.RuneLiteWrapped",
+            "projectName": "tracker"
+        }
+
+    ]
+}
