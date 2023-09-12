@@ -43,6 +43,7 @@ class TelemetryData {
 	private final String event;
 }
 
+
 // game tick data
 @Getter
 @RequiredArgsConstructor
@@ -55,6 +56,7 @@ class GameTickData {
 	private final LocationData location;
 }
 
+
 @Getter
 @RequiredArgsConstructor
 class LocationData {
@@ -63,8 +65,7 @@ class LocationData {
 	private final int regionId;
 
 	// Static method to create a LocationData object from a LocalPoint object
-	public static LocationData fromWorldPoint(
-			WorldPoint worldPoint) {
+	public static LocationData fromWorldPoint(WorldPoint worldPoint) {
 		// get x and y coordinates
 		int x = worldPoint.getX();
 		int y = worldPoint.getY();
@@ -75,6 +76,7 @@ class LocationData {
 	}
 }
 
+
 @Getter
 @RequiredArgsConstructor
 class ActorData {
@@ -83,23 +85,20 @@ class ActorData {
 	private final LocationData location;
 
 	// static method to create an ActorData object from an Actor object
-	public static ActorData fromActor(
-			Actor actor) {
+	public static ActorData fromActor(Actor actor) {
 		// get name and combat level
 		String name = actor.getName();
 		int combatLevel = actor.getCombatLevel();
 
 		// get location
-		WorldPoint worldPoint = actor
-				.getWorldLocation();
-		LocationData location = LocationData
-				.fromWorldPoint(worldPoint);
+		WorldPoint worldPoint = actor.getWorldLocation();
+		LocationData location = LocationData.fromWorldPoint(worldPoint);
 
 		// return new ActorData object
-		return new ActorData(name, combatLevel,
-				location);
+		return new ActorData(name, combatLevel, location);
 	}
 }
+
 
 @Getter
 @RequiredArgsConstructor
@@ -108,19 +107,17 @@ class HitsplatData {
 	private final ActorData actor;
 
 	// static method to create a HitsplatData object from a HitsplatApplied event
-	public static HitsplatData fromHitsplatApplied(
-			HitsplatApplied event) {
+	public static HitsplatData fromHitsplatApplied(HitsplatApplied event) {
 		// get hitsplat and actor
 		Hitsplat hitsplat = event.getHitsplat();
 		Actor actor = event.getActor();
-		ActorData actorData = ActorData
-				.fromActor(actor);
+		ActorData actorData = ActorData.fromActor(actor);
 
 		// return new HitsplatData object
-		return new HitsplatData(hitsplat,
-				actorData);
+		return new HitsplatData(hitsplat, actorData);
 	}
 }
+
 
 @Slf4j
 @PluginDescriptor(name = "Runelite Tracker")
@@ -150,16 +147,10 @@ public class TrackerPlugin extends Plugin {
 	}
 
 	@Subscribe
-	public void onGameStateChanged(
-			GameStateChanged gameStateChanged) {
-		if (gameStateChanged
-				.getGameState() == GameState.LOGGED_IN) {
-			client.addChatMessage(
-					ChatMessageType.GAMEMESSAGE,
-					"",
-					"Example says "
-							+ config.server(),
-					null);
+	public void onGameStateChanged(GameStateChanged gameStateChanged) {
+		if (gameStateChanged.getGameState() == GameState.LOGGED_IN) {
+			client.addChatMessage(ChatMessageType.GAMEMESSAGE, "",
+					"Example says " + config.server(), null);
 		}
 	}
 
@@ -167,8 +158,7 @@ public class TrackerPlugin extends Plugin {
 	// should take in an event object (any type that can be serialised by jackson),
 	// and an endpoint
 	// will serialise the object, and send it to the server
-	private void sendTelemetry(Object event,
-			String eventName) {
+	private void sendTelemetry(Object event, String eventName) {
 		// define url from config.server() and append endpoint, handle
 		// missing trailing slash, and add "api/v1/event"
 		String url = config.server();
@@ -180,30 +170,20 @@ public class TrackerPlugin extends Plugin {
 		url += "/" + eventName + "/";
 
 		// create a new telemetry data object
-		TelemetryData telemetryData = new TelemetryData(
-				System.currentTimeMillis(),
-				event,
-				client.getLocalPlayer().getName(),
-				eventName);
+		TelemetryData telemetryData = new TelemetryData(System.currentTimeMillis(), event,
+				client.getLocalPlayer().getName(), eventName);
 
 		// define and object mapper
 		ObjectMapper mapper = new ObjectMapper();
 
 		// get json for the event and handle JsonProcessingException
 		try {
-			String json = mapper
-					.writeValueAsString(
-							telemetryData);
+			String json = mapper.writeValueAsString(telemetryData);
 			// create a new post request
-			Request request = new Request.Builder()
-					.url(url)
-					.post(RequestBody.create(json,
-							MediaType.get(
-									"application/json; charset=utf-8")))
+			Request request = new Request.Builder().url(url).post(
+					RequestBody.create(json, MediaType.get("application/json; charset=utf-8")))
 					.build();
-			log.info("Sending {} to {}",
-					json,
-					url);
+			log.info("Sending {} to {}", json, url);
 
 			// send the request and handle IOException
 			okHttpClient.newCall(request).enqueue(new Callback() {
@@ -229,38 +209,40 @@ public class TrackerPlugin extends Plugin {
 
 	@Subscribe()
 	public void onStatChanged(StatChanged event) {
+
+		// print tick count to console
+		log.info("Tick count: {}", tickCount);
 		// send event data to server
-		sendTelemetry(event,
-				"stat-changed");
+		sendTelemetry(event, "stat-changed");
 	}
 
 	@Subscribe()
-	public void onHitsplatApplied(
-			HitsplatApplied event) {
+	public void onHitsplatApplied(HitsplatApplied event) {
+		// print tick count to console
+		log.info("Tick count: {}", tickCount);
 		// send event data to server
-		sendTelemetry(
-				HitsplatData.fromHitsplatApplied(
-						event),
-				"hitsplat-applied");
+		sendTelemetry(HitsplatData.fromHitsplatApplied(event), "hitsplat-applied");
 	}
 
 	@Subscribe()
 	public void onActorDeath(ActorDeath event) {
+		// print tick count to console
+		log.info("Tick count: {}", tickCount);
 		// send event data to server
 		sendTelemetry(ActorData.fromActor(event.getActor()), "actor-death");
 	}
 
 	@Subscribe()
-	public void onGrandExchangeOfferChanged(
-			GrandExchangeOfferChanged event) {
+	public void onGrandExchangeOfferChanged(GrandExchangeOfferChanged event) {
+		// print tick count to console
+		log.info("Tick count: {}", tickCount);
 
 		// TODO(j.swannack): the first time this fires after a user signs in, the local
 		// player is null and that causes errors (when trying to get the name), this
 		// should be fixed somehow.
 
 		// send event data to server
-		sendTelemetry(event,
-				"grand-exchange-offer-changed");
+		sendTelemetry(event, "grand-exchange-offer-changed");
 	}
 
 	@Subscribe()
@@ -268,10 +250,12 @@ public class TrackerPlugin extends Plugin {
 		// increment game tick count
 		tickCount++;
 
+		// print tick count to console
+		log.info("Tick count: {}", tickCount);
+
 		// send event data to server
 		// information and send that instead of the event
-		sendTelemetry(this.buildGameTickData(),
-				"game-tick");
+		sendTelemetry(this.buildGameTickData(), "game-tick");
 
 	}
 
@@ -282,33 +266,25 @@ public class TrackerPlugin extends Plugin {
 		int[] equipmentIds = player.getPlayerComposition().getEquipmentIds();
 
 		// get player location
-		WorldPoint localPoint = player
-				.getWorldLocation();
-		LocationData location = LocationData
-				.fromWorldPoint(localPoint);
+		WorldPoint localPoint = player.getWorldLocation();
+		LocationData location = LocationData.fromWorldPoint(localPoint);
 
 		// get player health
-		int health = client.getBoostedSkillLevel(
-				Skill.HITPOINTS);
+		int health = client.getBoostedSkillLevel(Skill.HITPOINTS);
 
 		// get player prayer
-		int prayer = client.getBoostedSkillLevel(
-				Skill.PRAYER);
+		int prayer = client.getBoostedSkillLevel(Skill.PRAYER);
 
 		// get player run energy
 		int energy = client.getEnergy();
 
 		// create a new game tick data object
-		return new GameTickData(
-				health, prayer, energy,
-				tickCount, equipmentIds, location);
+		return new GameTickData(health, prayer, energy, tickCount, equipmentIds, location);
 
 	}
 
 	@Provides
-	TrackerConfig provideConfig(
-			ConfigManager configManager) {
-		return configManager
-				.getConfig(TrackerConfig.class);
+	TrackerConfig provideConfig(ConfigManager configManager) {
+		return configManager.getConfig(TrackerConfig.class);
 	}
 }
