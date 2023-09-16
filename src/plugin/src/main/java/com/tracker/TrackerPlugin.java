@@ -1,37 +1,39 @@
 package com.tracker;
 
-import com.google.inject.Provides;
+// import IOException
+import java.io.IOException;
 import javax.inject.Inject;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.inject.Provides;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.api.Actor;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
+import net.runelite.api.Hitsplat;
 import net.runelite.api.Player;
 import net.runelite.api.Skill;
-import net.runelite.api.Actor;
-import net.runelite.api.Hitsplat;
 import net.runelite.api.coords.WorldPoint;
-import net.runelite.api.events.GameStateChanged;
-import net.runelite.api.events.StatChanged;
-import net.runelite.api.events.HitsplatApplied;
-import net.runelite.api.events.GrandExchangeOfferChanged;
-import net.runelite.api.events.GameTick;
 import net.runelite.api.events.ActorDeath;
+import net.runelite.api.events.GameStateChanged;
+import net.runelite.api.events.GameTick;
+import net.runelite.api.events.GrandExchangeOfferChanged;
+import net.runelite.api.events.HitsplatApplied;
+import net.runelite.api.events.StatChanged;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import okhttp3.*;
-
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
-// import IOException
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 // telemetry data class definition
 @Getter
@@ -123,9 +125,6 @@ class HitsplatData {
 @PluginDescriptor(name = "Runelite Tracker")
 public class TrackerPlugin extends Plugin {
 
-	// private game tick count
-	private int tickCount = 0;
-
 	@Inject
 	private Client client;
 
@@ -211,7 +210,7 @@ public class TrackerPlugin extends Plugin {
 	public void onStatChanged(StatChanged event) {
 
 		// print tick count to console
-		log.info("Tick count: {}", tickCount);
+		log.info("Tick count: {}", client.getTickCount());
 		// send event data to server
 		sendTelemetry(event, "stat-changed");
 	}
@@ -219,7 +218,7 @@ public class TrackerPlugin extends Plugin {
 	@Subscribe()
 	public void onHitsplatApplied(HitsplatApplied event) {
 		// print tick count to console
-		log.info("Tick count: {}", tickCount);
+		log.info("Tick count: {}", client.getTickCount());
 		// send event data to server
 		sendTelemetry(HitsplatData.fromHitsplatApplied(event), "hitsplat-applied");
 	}
@@ -227,7 +226,7 @@ public class TrackerPlugin extends Plugin {
 	@Subscribe()
 	public void onActorDeath(ActorDeath event) {
 		// print tick count to console
-		log.info("Tick count: {}", tickCount);
+		log.info("Tick count: {}", client.getTickCount());
 		// send event data to server
 		sendTelemetry(ActorData.fromActor(event.getActor()), "actor-death");
 	}
@@ -235,7 +234,7 @@ public class TrackerPlugin extends Plugin {
 	@Subscribe()
 	public void onGrandExchangeOfferChanged(GrandExchangeOfferChanged event) {
 		// print tick count to console
-		log.info("Tick count: {}", tickCount);
+		log.info("Tick count: {}", client.getTickCount());
 
 		// TODO(j.swannack): the first time this fires after a user signs in, the local
 		// player is null and that causes errors (when trying to get the name), this
@@ -247,11 +246,9 @@ public class TrackerPlugin extends Plugin {
 
 	@Subscribe()
 	public void onGameTick(GameTick event) {
-		// increment game tick count
-		tickCount++;
 
 		// print tick count to console
-		log.info("Tick count: {}", tickCount);
+		log.info("Tick count: {}", client.getTickCount());
 
 		// send event data to server
 		// information and send that instead of the event
@@ -279,7 +276,8 @@ public class TrackerPlugin extends Plugin {
 		int energy = client.getEnergy();
 
 		// create a new game tick data object
-		return new GameTickData(health, prayer, energy, tickCount, equipmentIds, location);
+		return new GameTickData(health, prayer, energy, client.getTickCount(), equipmentIds,
+				location);
 
 	}
 
