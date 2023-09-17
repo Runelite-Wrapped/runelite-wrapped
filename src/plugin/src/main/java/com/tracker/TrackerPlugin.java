@@ -43,6 +43,7 @@ class TelemetryData {
 	private final Object data;
 	private final String username;
 	private final String event;
+	private final long tickCount;
 }
 
 
