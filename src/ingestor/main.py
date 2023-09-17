@@ -93,6 +93,7 @@ class GameEventBase(BaseModel):
     event: str
     timestamp: int
     username: str
+    tickCount: int
 
 
 class GameTickEvent(GameEventBase):
