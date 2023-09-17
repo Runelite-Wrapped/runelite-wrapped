@@ -171,7 +171,7 @@ public class TrackerPlugin extends Plugin {
 
 		// create a new telemetry data object
 		TelemetryData telemetryData = new TelemetryData(System.currentTimeMillis(), event,
-				client.getLocalPlayer().getName(), eventName);
+				client.getLocalPlayer().getName(), eventName, client.getTickCount());
 
 		// define and object mapper
 		ObjectMapper mapper = new ObjectMapper();
