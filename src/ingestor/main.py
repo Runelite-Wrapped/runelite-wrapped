@@ -52,11 +52,6 @@ class StatChangedData(BaseModel):
 
 
 class OfferData(BaseModel):
-    ab: int
-    ac: int
-    an: int
-    au: int
-    aw: int
     itemId: int
     price: int
     quantitySold: int
