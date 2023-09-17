@@ -52,11 +52,6 @@ class StatChangedData(BaseModel):
 
 
 class OfferData(BaseModel):
-    ab: int
-    ac: int
-    an: int
-    au: int
-    aw: int
     itemId: int
     price: int
     quantitySold: int
@@ -93,6 +88,8 @@ class GameEventBase(BaseModel):
     event: str
     timestamp: int
     username: str
+    tickCount: int
+    sessionId: str
 
 
 class GameTickEvent(GameEventBase):
@@ -121,25 +118,25 @@ async def game_tick(event: GameTickEvent):
     return {"message": "OK"}
 
 
-@app.post("/api/v1/event/stat-changed")
+@app.post("/api/v1/event/stat-changed/")
 async def stat_change(event: StatChangedEvent):
     stat_changed_collection.insert_one(event.dict())
     return {"message": "OK"}
 
 
-@app.post("/api/v1/event/grand-exchange-offer-changed")
+@app.post("/api/v1/event/grand-exchange-offer-changed/")
 async def grand_exchange_offer_change(event: GrandExchangeOfferChangedEvent):
     grand_exchange_offer_changed_collection.insert_one(event.dict())
     return {"message": "OK"}
 
 
-@app.post("/api/v1/event/hitsplat-applied")
+@app.post("/api/v1/event/hitsplat-applied/")
 async def hitsplat_applied(event: HitsplatAppliedEvent):
     hitsplat_applied_collection.insert_one(event.dict())
     return {"message": "OK"}
 
 
-@app.post("/api/v1/event/actor-death")
+@app.post("/api/v1/event/actor-death/")
 async def actor_death(event: ActorDeathEvent):
     actor_death_collection.insert_one(event.dict())
     return {"message": "OK"}

@@ -43,6 +43,8 @@ class TelemetryData {
 	private final Object data;
 	private final String username;
 	private final String event;
+	private final long tickCount;
+	private final String sessionId;
 }
 
 
@@ -125,6 +127,13 @@ class HitsplatData {
 @PluginDescriptor(name = "Runelite Tracker")
 public class TrackerPlugin extends Plugin {
 
+	// generate random string for session id
+	protected static String generateSessionId() {
+		return "session-" + System.currentTimeMillis();
+	}
+
+	private String sessionId;
+
 	@Inject
 	private Client client;
 
@@ -133,6 +142,14 @@ public class TrackerPlugin extends Plugin {
 
 	@Inject
 	private TrackerConfig config;
+
+	// getter and setter for sessionId
+	public String getSessionId() {
+		if (sessionId == null) {
+			sessionId = generateSessionId();
+		}
+		return sessionId;
+	}
 
 	@Override
 	protected void startUp() throws Exception {
@@ -150,6 +167,9 @@ public class TrackerPlugin extends Plugin {
 		if (gameStateChanged.getGameState() == GameState.LOGGED_IN) {
 			client.addChatMessage(ChatMessageType.GAMEMESSAGE, "",
 					"Example says " + config.server(), null);
+		}
+		if (gameStateChanged.getGameState() == GameState.LOGGING_IN) {
+			sessionId = generateSessionId();
 		}
 	}
 
@@ -170,7 +190,8 @@ public class TrackerPlugin extends Plugin {
 
 		// create a new telemetry data object
 		TelemetryData telemetryData = new TelemetryData(System.currentTimeMillis(), event,
-				client.getLocalPlayer().getName(), eventName);
+				client.getLocalPlayer().getName(), eventName, client.getTickCount(),
+				getSessionId());
 
 		// define and object mapper
 		ObjectMapper mapper = new ObjectMapper();
