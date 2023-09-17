@@ -34,6 +34,7 @@ class ActorData(BaseModel):
     location: LocationData
     name: str
 
+
 class GameTickData(BaseModel):
     energy: int
     health: int
@@ -146,10 +147,12 @@ async def actor_death(event: ActorDeathEvent):
 
 def main():
     from uvicorn import run
+
     run(app, host="0.0.0.0", port=8000)
 
 
 if __name__ == "__main__":
     import logging
+
     logging.basicConfig(level=logging.INFO)
     main()
