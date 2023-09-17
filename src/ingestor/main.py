@@ -94,6 +94,7 @@ class GameEventBase(BaseModel):
     timestamp: int
     username: str
     tickCount: int
+    sessionId: str
 
 
 class GameTickEvent(GameEventBase):
