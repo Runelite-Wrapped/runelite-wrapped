@@ -40,24 +40,17 @@ So maybe we write a python function that pulls a players data from our mongoDB i
 
 ## Setup
 
-The setup is pretty ad hoc at this point. You should have a virtual environment at the root of your repository, this assumes that you have already set that up and activated it (see the [root README](/README.md) for more info).
-
-### Setting up dagster locally
-
-This is for linux, I recommend setting up WSL2 for Windows users.
-
-```bash
-# From the root of the repository
-pip install -r apps/analytics/requirements.txt
-```
+See the [root README ](/README.md) for setup instructions.
 
 ## Running
 
-With the virtual environment activated you can run:
+With the repo virtual environment activated you can run:
 
 ```bash
 dagster dev -m analytics
 ```
+
+(Or just use the vscode debug configuration described in the root readme.)
 
 And a local dagster instance will be spooled up, accessible by default from `localhost:3000` in your browser.
 
