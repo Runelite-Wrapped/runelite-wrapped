@@ -110,7 +110,25 @@ cp -r .vscode.example/ .vscode/
 ```
 Now in the debug section of vscode you should see two options for running the ingestor and analytics apps.
 
+### Running / Debugging
+
+You can run the ingestor and analytics apps from within vscode by selecting the appropriate option in the debug section.
+
+![vscode_debug_launcher](docs/images/image.png)
+
+You can also run them from the command line with the following commands:
+
+```bash
+# ingestor
+python -m ingestor.main
+# equivalent to:
+# python apps/ingestor/ingestor/main.py
+
+# analytics
+python -m dagster dev -m analytics
+```
+
 ## Other Stuff
 ### Relevant Tutorials
 
-I have linked a bunch of relevant tutorials for spooling up/learning python + relevant packages [here](/tutorials/)
+I have linked a bunch of relevant tutorials for spooling up/learning python + relevant packages [here](/docs/tutorials/)

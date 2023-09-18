@@ -5,27 +5,40 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Analytics",
+            "type": "python",
+            "request": "launch",
+            "module": "dagster",
+            "args": [
+                "dev",
+                "-m",
+                "analytics"
+            ],
+            "justMyCode": true,
+            "envFile": ".env"
+        },
+        {
             "name": "Ingestor",
             "type": "python",
             "request": "launch",
-            "program": "apps/ingestor/main.py",
-            "console": "integratedTerminal",
+            "module": "ingestor.main",
             "justMyCode": true,
-            "envFile": "apps/ingestor/.env"
+            "envFile": ".env"
         },
         {
+            "name": "Plugin",
             "type": "java",
-            "name": "TrackerPluginTest",
             "request": "launch",
             "mainClass": "com.tracker.TrackerPluginTest",
             "projectName": "tracker"
         },
         {
-            "type": "java",
-            "name": "RuneLiteWrapped",
+            "name": "Python: Current File",
+            "type": "python",
             "request": "launch",
-            "mainClass": "com.tracker.RuneLiteWrapped",
-            "projectName": "tracker"
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": true
         }
     ]
 }
