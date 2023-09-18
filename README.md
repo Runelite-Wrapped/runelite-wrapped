@@ -1,10 +1,10 @@
 # RuneLite Wrapped
-![banner](/assets/runelite_wrapped_icon_wide.png)
+![banner](docs/images/runelite_wrapped_icon_wide.png)
 
 
 ## Basic App Architecture
 
-![Architecture Graph](/assets/runelite_wrapped_architecture.svg)
+![Architecture Graph](docs/images/runelite_wrapped_architecture.svg)
 
 ## Components
 
