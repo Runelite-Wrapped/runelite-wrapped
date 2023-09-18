@@ -8,10 +8,10 @@
             "name": "Ingestor",
             "type": "python",
             "request": "launch",
-            "program": "src/ingestor/main.py",
+            "program": "apps/ingestor/main.py",
             "console": "integratedTerminal",
             "justMyCode": true,
-            "envFile": "src/ingestor/.env"
+            "envFile": "apps/ingestor/.env"
         },
         {
             "type": "java",
@@ -27,6 +27,5 @@
             "mainClass": "com.tracker.RuneLiteWrapped",
             "projectName": "tracker"
         }
-
     ]
 }
