@@ -13,14 +13,9 @@ Summary of information about this part of the project
 
 ## Setup required
 
-Copy the `.env.example` file and fill in the missing values
+You'll need a mongodb instance running somewhere and point to it with the MONGODB_URI env var. I recommend also setting up mongo-express or installing mongo-compass so you can debug/inspect db entries.
 
-```sh
-cd src/ingestor # if not already in this dir
-cp .env.example .env
-```
-
-You'll need a mongodb instance running somewhere and point to it with the MONGODB_URI env var. I recommend also setting up mongo-express so you can debug/inspect db entries.
+To set up the environment variable you can add `MONGODB_URI={your mongo uri}` to the `.env` file in the root of the repository.
 
 ## Data Received
 

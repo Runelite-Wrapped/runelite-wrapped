@@ -47,6 +47,15 @@ PYTHONPATH=./common:./apps/ingestor:./apps/analytics
 
 The "python path" is a list of directories that python will look in when you try to import a package. You can read more about it [here](https://docs.python.org/3/tutorial/modules.html#the-module-search-path).
 
+You should also have a virtual environment set up at the root of the repository. This can be done with the following commands:
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+You will also want to configure vscode to use this virtual environment. You can do this by opening the command palette (ctrl+shift+p) and searching for "Python: Select Interpreter". Then select the virtual environment you just created. Note: you will need to have the python extension installed for vscode to have this command.
+
 ## Relevant Tutorials
 
 I have linked a bunch of relevant tutorials for spooling up [here](/tutorials/)

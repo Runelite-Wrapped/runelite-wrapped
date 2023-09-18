@@ -40,29 +40,16 @@ So maybe we write a python function that pulls a players data from our mongoDB i
 
 ## Setup
 
-The setup is pretty ad hoc at this point.
+The setup is pretty ad hoc at this point. You should have a virtual environment at the root of your repository, this assumes that you have already set that up and activated it (see the [root README](/README.md) for more info).
 
 ### Setting up dagster locally
 
 This is for linux, I recommend setting up WSL2 for Windows users.
 
 ```bash
-# Change dir to analytics dir
-cd src/analytics/
-
-# Create a virtual environment
-python -m venv venv
-
-# Activate the virtual environment
-source venv/bin/activate
-
-# Install deps with pip
-pip install -r requirements.txt
+# From the root of the repository
+pip install -r apps/analytics/requirements.txt
 ```
-
-From here you will probably want to select this interpreter in your IDE. For vscode you can do this by opening the command palette (ctrl+shift+p) and typing "Python: Select Interpreter" and selecting `python` in the `src/analytics/venv/bin/` directory.
-
-This will set you up for this specific part of the project, when working elsewhere you may need to select a different interpreter.
 
 ## Running
 
