@@ -42,7 +42,7 @@ services:
       - app-network
 
   ingestor:
-    build: src/ingestor
+    build: apps/ingestor
     restart: always
     environment:
       MONGO_URI: mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017/
@@ -53,7 +53,7 @@ services:
 
   # TODO: make dockerfile for analytics
   analytics:
-    build: src/analytics
+    build: apps/analytics
     environment:
       MONGO_URI: mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017/
     networks:
@@ -63,7 +63,7 @@ services:
 
   # TODO: make dockerfile for backend
   backend:
-    build: src/webapp/be
+    build: apps/webapp/be
     networks:
       - app-network
     depends_on:
@@ -71,7 +71,7 @@ services:
 
   # TODO: make dockerfile for frontend
   frontend:
-    build: src/webapp/fe
+    build: apps/webapp/fe
     networks:
       - app-network
     depends_on:
