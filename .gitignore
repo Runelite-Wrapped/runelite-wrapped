@@ -3,7 +3,7 @@ scratch/
 data/
 
 tmp*/
-
+.xkm
 .env*
 !.env.example
 
