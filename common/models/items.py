@@ -9,5 +9,8 @@ class OsrsItem(BaseModel):
     duplicate: bool
 
 
-def parse_osrsbox_db(data: dict) -> Dict[int, OsrsItem]:
-    return parse_obj_as(Dict[int, OsrsItem], data)
+OsrsItemDb = Dict[int, OsrsItem]
+
+
+def parse_osrsbox_db(data: dict) -> OsrsItemDb:
+    return parse_obj_as(OsrsItemDb, data)
