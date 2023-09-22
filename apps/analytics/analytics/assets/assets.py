@@ -1,5 +1,8 @@
 from dagster import asset, get_dagster_logger
 
+from analytics.extract.items import get_osrsbox_db
+from models.items import OsrsItemDb
+
 from analytics.processing.tick_count import (
     calculate_all_user_tick_counts,
     load_all_user_tick_counts,
@@ -19,3 +22,8 @@ def tick_count():
     _logger.info(f"Calculated tick counts for {len(tick_counts)} users")
     load_all_user_tick_counts(tick_counts, analytics_db_client=analytics_db_client)
     _logger.info(f"Loaded tick counts for {len(tick_counts)} users")
+
+
+@asset()
+def osrs_item_db() -> OsrsItemDb:
+    return get_osrsbox_db()
