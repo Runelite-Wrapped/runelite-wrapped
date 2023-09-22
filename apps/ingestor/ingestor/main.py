@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from pymongo import MongoClient
 
-from models.raw import (
+from models.telemetry import (
     ActorDeathEvent,
     GameTickEvent,
     GrandExchangeOfferChangedEvent,
