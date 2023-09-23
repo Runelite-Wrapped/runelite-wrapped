@@ -7,6 +7,9 @@ from analytics.processing.tick_count import (
     calculate_all_user_tick_counts,
     load_all_user_tick_counts,
 )
+from analytics.processing.equipment import (
+    calculate_equipment_tick_counts_for_user,
+)
 from analytics.mongo import RawDbClient, AnalyticsDbClient
 
 _logger = get_dagster_logger(__name__)
@@ -27,3 +30,20 @@ def tick_count():
 @asset()
 def osrs_item_db() -> OsrsItemDb:
     return get_osrsbox_db()
+
+
+@asset()
+def equipment_analysis():
+    # TODO(j.swannack): make these dagster resources
+    raw_db_client = RawDbClient()
+    analytics_db_client = AnalyticsDbClient()
+
+    # get all usernames
+    # TODO(j.swannack): make into asset
+    usernames = raw_db_client.get_game_tick_collection().distinct("username")
+
+    for username in usernames:
+        calculate_equipment_tick_counts_for_user(
+            username=username,
+            raw_db_client=raw_db_client,
+        )
