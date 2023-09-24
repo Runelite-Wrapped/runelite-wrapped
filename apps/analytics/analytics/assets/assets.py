@@ -35,6 +35,10 @@ def osrs_item_db() -> OsrsItemDb:
 
 @asset()
 def equipment_analysis(osrs_item_db: OsrsItemDb):
+    """
+    Counts the number of game ticks a player has spent wearing each piece of equipment.
+    """
+
     # TODO(j.swannack): make these dagster resources
     raw_db_client = RawDbClient()
     analytics_db_client = AnalyticsDbClient()
