@@ -8,6 +8,11 @@ def get_all_usernames(raw_db_client: RawDbClient) -> List[str]:
     return raw_db_client.get_game_tick_collection().distinct("username")
 
 
+def is_item_id(equipment_id: int) -> bool:
+    # All equipment IDs <= 512 are kit IDs, not item IDs
+    return equipment_id > 512
+
+
 def get_item_from_equipment_id(
     equipment_id: int,
     osrs_item_db: OsrsItemDb,
@@ -18,7 +23,7 @@ def get_item_from_equipment_id(
     #   kit ID. Values above 512 indicate an item and can be converted to the item ID by
     #   subtracting 512.
     # https://static.runelite.net/api/runelite-api/net/runelite/api/PlayerComposition.html
-    if equipment_id <= 512:
+    if not is_item_id(equipment_id):
         return None
 
     item_id = equipment_id - 512

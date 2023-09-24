@@ -12,6 +12,10 @@ _ANALYTICS_DB_NAME = "runelite-wrapped-analytics"
 _GAME_TICK_COLLECTION_NAME = "game_ticks"
 
 
+_ANALYTICS_TOTAL_TICKS_COLLECTION_NAME = "total_ticks"
+_ANALYTICS_USER_EQUIPMENT_COUNT_COLLECTION_NAME = "user_equipment_count"
+
+
 class RawDbClient:
     def __init__(self, uri: str = None):
         self._uri = uri or _URI
@@ -33,4 +37,11 @@ class AnalyticsDbClient:
         return self.client.get_database(_ANALYTICS_DB_NAME)
 
     def get_total_tick_collection(self) -> Collection:
-        return self._get_analytics_db().get_collection("total_ticks")
+        return self._get_analytics_db().get_collection(
+            _ANALYTICS_TOTAL_TICKS_COLLECTION_NAME
+        )
+
+    def get_user_equipment_count_collection(self) -> Collection:
+        return self._get_analytics_db().get_collection(
+            _ANALYTICS_USER_EQUIPMENT_COUNT_COLLECTION_NAME
+        )

@@ -4,8 +4,8 @@ import time
 from models.items import OsrsItemDb
 from models.analytics import EquipmentCount, SlotEquipmentCount, UserEquipmentCount
 
-from analytics.helpers import get_item_from_equipment_id
-from analytics.mongo import RawDbClient
+from analytics.helpers import get_item_from_equipment_id, is_item_id
+from analytics.mongo import RawDbClient, AnalyticsDbClient
 
 
 def calculate_equipment_tick_counts_for_user(
@@ -46,12 +46,22 @@ def calculate_equipment_tick_counts_for_user(
                             }
                         )
                         for equipment_id, count in count_list.items()
+                        if is_item_id(equipment_id)
                     ],
                     key=lambda v: v.count,
                 )
             )
             for count_list in equipment_ids_counts
         ],
-        timestamp=time.now(),
+        timestamp=time.time(),
         username=username,
+    )
+
+
+def load_equipment_tick_counts_for_user(
+    user_equipment_count: UserEquipmentCount,
+    analytics_db_client: AnalyticsDbClient,
+):
+    analytics_db_client.get_user_equipment_count_collection().insert_one(
+        user_equipment_count.dict()
     )
