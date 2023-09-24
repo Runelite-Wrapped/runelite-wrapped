@@ -1,11 +1,15 @@
 import pandas as pd
 
+from models.items import OsrsItemDb
+
+from analytics.helpers import get_item_from_equipment_id
 from analytics.mongo import RawDbClient
 
 
 def calculate_equipment_tick_counts_for_user(
     username: str,
     raw_db_client: RawDbClient,
+    osrs_item_db: OsrsItemDb,
 ):
     gt_col = raw_db_client.get_game_tick_collection()
 
@@ -23,6 +27,18 @@ def calculate_equipment_tick_counts_for_user(
     # for each column get the count of each unique value
     equipment_ids_counts = [
         equipment_ids_df[col].value_counts().to_dict() for col in equipment_ids_df
+    ]
+
+    # for each column, convert the equipment id to the item name
+    equipment_ids_counts = [
+        [
+            {
+                "item": get_item_from_equipment_id(equipment_id, osrs_item_db),
+                "count": count,
+            }
+            for equipment_id, count in count_list.items()
+        ]
+        for count_list in equipment_ids_counts
     ]
 
     return equipment_ids_counts

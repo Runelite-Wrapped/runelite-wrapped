@@ -33,10 +33,9 @@ def osrs_item_db() -> OsrsItemDb:
 
 
 @asset()
-def equipment_analysis():
+def equipment_analysis(osrs_item_db: OsrsItemDb):
     # TODO(j.swannack): make these dagster resources
     raw_db_client = RawDbClient()
-    analytics_db_client = AnalyticsDbClient()
 
     # get all usernames
     # TODO(j.swannack): make into asset
@@ -46,4 +45,5 @@ def equipment_analysis():
         calculate_equipment_tick_counts_for_user(
             username=username,
             raw_db_client=raw_db_client,
+            osrs_item_db=osrs_item_db,
         )
