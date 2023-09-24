@@ -1,6 +1,8 @@
 import pandas as pd
+import time
 
 from models.items import OsrsItemDb
+from models.analytics import EquipmentCount, SlotEquipmentCount, UserEquipmentCount
 
 from analytics.helpers import get_item_from_equipment_id
 from analytics.mongo import RawDbClient
@@ -10,7 +12,7 @@ def calculate_equipment_tick_counts_for_user(
     username: str,
     raw_db_client: RawDbClient,
     osrs_item_db: OsrsItemDb,
-):
+) -> UserEquipmentCount:
     gt_col = raw_db_client.get_game_tick_collection()
 
     # get all data.equipmentIds for this user, including duplicates
@@ -30,15 +32,26 @@ def calculate_equipment_tick_counts_for_user(
     ]
 
     # for each column, convert the equipment id to the item name
-    equipment_ids_counts = [
-        [
-            {
-                "item": get_item_from_equipment_id(equipment_id, osrs_item_db),
-                "count": count,
-            }
-            for equipment_id, count in count_list.items()
-        ]
-        for count_list in equipment_ids_counts
-    ]
-
-    return equipment_ids_counts
+    return UserEquipmentCount(
+        value=[
+            SlotEquipmentCount(
+                counts=sorted(
+                    [
+                        EquipmentCount(
+                            **{
+                                "item": get_item_from_equipment_id(
+                                    equipment_id, osrs_item_db
+                                ),
+                                "count": count,
+                            }
+                        )
+                        for equipment_id, count in count_list.items()
+                    ],
+                    key=lambda v: v.count,
+                )
+            )
+            for count_list in equipment_ids_counts
+        ],
+        timestamp=time.now(),
+        username=username,
+    )
