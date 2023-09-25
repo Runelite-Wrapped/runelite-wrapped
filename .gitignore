@@ -1,6 +1,7 @@
 # General
 scratch/
 data/
+.dagster_home/
 
 tmp*/
 .xkm
