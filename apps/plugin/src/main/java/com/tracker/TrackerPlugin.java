@@ -3,6 +3,7 @@ package com.tracker;
 // import IOException
 import java.io.IOException;
 import javax.inject.Inject;
+import java.util.Collection;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Provides;
 import lombok.Getter;
@@ -15,6 +16,7 @@ import net.runelite.api.GameState;
 import net.runelite.api.Hitsplat;
 import net.runelite.api.Player;
 import net.runelite.api.Skill;
+import net.runelite.api.NPC;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.ActorDeath;
 import net.runelite.api.events.GameStateChanged;
@@ -22,10 +24,13 @@ import net.runelite.api.events.GameTick;
 import net.runelite.api.events.GrandExchangeOfferChanged;
 import net.runelite.api.events.HitsplatApplied;
 import net.runelite.api.events.StatChanged;
+import net.runelite.client.events.PlayerLootReceived;
+import net.runelite.client.events.NpcLootReceived;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.runelite.client.game.ItemStack;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -87,6 +92,12 @@ class ActorData {
 	private final String name;
 	private final int combatLevel;
 	private final LocationData location;
+	private final int id;
+	// type
+	// 0 = unknown
+	// 1 = npc
+	// 2 = player
+	private final int type;
 
 	// static method to create an ActorData object from an Actor object
 	public static ActorData fromActor(Actor actor) {
@@ -98,8 +109,25 @@ class ActorData {
 		WorldPoint worldPoint = actor.getWorldLocation();
 		LocationData location = LocationData.fromWorldPoint(worldPoint);
 
+		int id = -1;
+		int type = 0;
+
+		// check if actor is an NPC
+		if (actor instanceof NPC) {
+			NPC npc = (NPC) actor;
+			id = npc.getId();
+			type = 1;
+		}
+
+		// check if actor is a player
+		if (actor instanceof Player) {
+			Player player = (Player) actor;
+			id = player.getId();
+			type = 2;
+		}
+
 		// return new ActorData object
-		return new ActorData(name, combatLevel, location);
+		return new ActorData(name, combatLevel, location, id, type);
 	}
 }
 
@@ -119,6 +147,57 @@ class HitsplatData {
 
 		// return new HitsplatData object
 		return new HitsplatData(hitsplat, actorData);
+	}
+}
+
+
+@Getter
+@RequiredArgsConstructor
+class ItemStackData {
+	private final int id;
+	private final int quantity;
+
+	// ignoring local point for now
+	// private final LocalPoint location;
+
+	public static ItemStackData fromItemStack(ItemStack itemStack) {
+		// get id and quantity
+		int id = itemStack.getId();
+		int quantity = itemStack.getQuantity();
+
+		// return new ItemStackData object
+		return new ItemStackData(id, quantity);
+	}
+}
+
+
+// npc loot received data
+@Getter
+@RequiredArgsConstructor
+class LootReceivedData {
+	private final ActorData actor;
+	private final ItemStackData[] items;
+
+	// static method to create a NpcLootReceivedData object from a NpcLootReceived
+	// event
+	public static LootReceivedData fromNpcLootReceived(NpcLootReceived event) {
+		return fromActorAndStack(event.getNpc(), event.getItems());
+	}
+
+	public static LootReceivedData fromPlayerLootReceived(PlayerLootReceived event) {
+		return fromActorAndStack(event.getPlayer(), event.getItems());
+	}
+
+	private static LootReceivedData fromActorAndStack(Actor actor,
+			Collection<ItemStack> itemStack) {
+		ActorData npcData = ActorData.fromActor(actor);
+
+		// get items (collection), map them using ItemStackData.fromItemStack, and cast to array
+		ItemStackData[] itemStacks =
+				itemStack.stream().map(ItemStackData::fromItemStack).toArray(ItemStackData[]::new);
+
+		// return new NpcLootReceivedData object
+		return new LootReceivedData(npcData, itemStacks);
 	}
 }
 
@@ -275,6 +354,22 @@ public class TrackerPlugin extends Plugin {
 		// information and send that instead of the event
 		sendTelemetry(this.buildGameTickData(), "game-tick");
 
+	}
+
+	@Subscribe()
+	public void onNpcLootReceived(final NpcLootReceived npcLootReceived) {
+		// print tick count to console
+		log.info("Tick count: {}", client.getTickCount());
+		// send event data to server
+		sendTelemetry(LootReceivedData.fromNpcLootReceived(npcLootReceived), "loot-received");
+	}
+
+	@Subscribe()
+	public void onPlayerLootReceived(final PlayerLootReceived playerLootReceived) {
+		// print tick count to console
+		log.info("Tick count: {}", client.getTickCount());
+		// send event data to server
+		sendTelemetry(LootReceivedData.fromPlayerLootReceived(playerLootReceived), "loot-received");
 	}
 
 	private GameTickData buildGameTickData() {

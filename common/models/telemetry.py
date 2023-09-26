@@ -8,10 +8,17 @@ class LocationData(BaseModel):
     regionId: int
 
 
+class ItemStackData(BaseModel):
+    id: int
+    quantity: int
+
+
 class ActorData(BaseModel):
     combatLevel: int
     location: LocationData
     name: str
+    type: int
+    id: int
 
 
 class GameTickData(BaseModel):
@@ -63,6 +70,11 @@ class ActorDeathData(BaseModel):
     name: str
 
 
+class LootReceivedData(BaseModel):
+    actor: ActorData
+    items: List[ItemStackData]
+
+
 class GameEventBase(BaseModel):
     event: str
     timestamp: int
@@ -89,3 +101,7 @@ class HitsplatAppliedEvent(GameEventBase):
 
 class ActorDeathEvent(GameEventBase):
     data: ActorDeathData
+
+
+class LootReceivedEvent(GameEventBase):
+    data: LootReceivedData
