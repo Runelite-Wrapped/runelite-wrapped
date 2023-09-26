@@ -1,3 +1,4 @@
+from typing import List
 from dagster import asset, get_dagster_logger
 
 from analytics.extract.items import get_osrsbox_db
@@ -12,9 +13,20 @@ from analytics.processing.equipment import (
     calculate_equipment_tick_counts_for_user,
     load_equipment_tick_counts_for_user,
 )
+from analytics.processing.usernames import get_all_usernames
 from analytics.resources import MongoClient
 
 _logger = get_dagster_logger(__name__)
+
+
+@asset()
+def usernames(mongo_client: MongoClient) -> list[str]:
+    return get_all_usernames(mongo_client.get_raw_client())
+
+
+@asset()
+def osrs_item_db() -> OsrsItemDb:
+    return get_osrsbox_db()
 
 
 @asset
@@ -34,13 +46,9 @@ def tick_count(
 
 
 @asset()
-def osrs_item_db() -> OsrsItemDb:
-    return get_osrsbox_db()
-
-
-@asset()
 def equipment_analysis(
     osrs_item_db: OsrsItemDb,
+    usernames: List[str],
     mongo_client: MongoClient,
 ):
     """
@@ -49,10 +57,6 @@ def equipment_analysis(
 
     raw_db_client = mongo_client.get_raw_client()
     analytics_db_client = mongo_client.get_analytics_client()
-
-    # get all usernames
-    # TODO(j.swannack): make into asset
-    usernames = raw_db_client.get_game_tick_collection().distinct("username")
 
     for username in usernames:
         user_equipment_count = calculate_equipment_tick_counts_for_user(
