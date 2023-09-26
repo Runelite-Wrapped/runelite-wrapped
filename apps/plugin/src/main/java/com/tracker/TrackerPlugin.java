@@ -15,6 +15,7 @@ import net.runelite.api.GameState;
 import net.runelite.api.Hitsplat;
 import net.runelite.api.Player;
 import net.runelite.api.Skill;
+import net.runelite.api.NPC;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.ActorDeath;
 import net.runelite.api.events.GameStateChanged;
@@ -22,10 +23,13 @@ import net.runelite.api.events.GameTick;
 import net.runelite.api.events.GrandExchangeOfferChanged;
 import net.runelite.api.events.HitsplatApplied;
 import net.runelite.api.events.StatChanged;
+import net.runelite.client.events.PlayerLootReceived;
+import net.runelite.client.events.NpcLootReceived;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.runelite.client.game.ItemStack;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -106,6 +110,32 @@ class ActorData {
 
 @Getter
 @RequiredArgsConstructor
+class NpcData {
+	private final int id;
+	private final String name;
+	private final int combatLevel;
+	private final LocationData location;
+
+	// static method to create an ActorData object from an Actor object
+	public static NpcData fromNpc(NPC npc) {
+		// get name and combat level
+		String name = npc.getName();
+		int combatLevel = npc.getCombatLevel();
+
+		// get location
+		WorldPoint worldPoint = npc.getWorldLocation();
+		LocationData location = LocationData.fromWorldPoint(worldPoint);
+
+		int id = npc.getId();
+
+		// return new ActorData object
+		return new NpcData(id, name, combatLevel, location);
+	}
+}
+
+
+@Getter
+@RequiredArgsConstructor
 class HitsplatData {
 	private final Hitsplat hitsplat;
 	private final ActorData actor;
@@ -119,6 +149,53 @@ class HitsplatData {
 
 		// return new HitsplatData object
 		return new HitsplatData(hitsplat, actorData);
+	}
+}
+
+
+@Getter
+@RequiredArgsConstructor
+class ItemStackData {
+	private final int id;
+	private final int quantity;
+
+	// ignoring local point for now
+	// private final LocalPoint location;
+
+	public static ItemStackData fromItemStack(ItemStack itemStack) {
+		// get id and quantity
+		int id = itemStack.getId();
+		int quantity = itemStack.getQuantity();
+
+		// return new ItemStackData object
+		return new ItemStackData(id, quantity);
+	}
+}
+
+
+// npc loot received data
+@Getter
+@RequiredArgsConstructor
+class NpcLootReceivedData {
+	private final NpcData npc;
+	private final ItemStackData[] items;
+
+	// static method to create a NpcLootReceivedData object from a NpcLootReceived
+	// event
+	public static NpcLootReceivedData fromNpcLootReceived(NpcLootReceived event) {
+		// private final NPC npc;
+		// private final Collection<ItemStack> items;
+
+		// get npc
+		NPC npc = event.getNpc();
+		NpcData npcData = NpcData.fromNpc(npc);
+
+		// get items (collection), map them using ItemStackData.fromItemStack, and cast to array
+		ItemStackData[] itemStacks = event.getItems().stream().map(ItemStackData::fromItemStack)
+				.toArray(ItemStackData[]::new);
+
+		// return new NpcLootReceivedData object
+		return new NpcLootReceivedData(npcData, itemStacks);
 	}
 }
 
@@ -275,6 +352,22 @@ public class TrackerPlugin extends Plugin {
 		// information and send that instead of the event
 		sendTelemetry(this.buildGameTickData(), "game-tick");
 
+	}
+
+	@Subscribe()
+	public void onNpcLootReceived(final NpcLootReceived npcLootReceived) {
+		// print tick count to console
+		log.info("Tick count: {}", client.getTickCount());
+		// send event data to server
+		sendTelemetry(npcLootReceived, "npc-loot-received");
+	}
+
+	@Subscribe()
+	public void onPlayerLootReceived(final PlayerLootReceived playerLootReceived) {
+		// print tick count to console
+		log.info("Tick count: {}", client.getTickCount());
+		// send event data to server
+		sendTelemetry(playerLootReceived, "player-loot-received");
 	}
 
 	private GameTickData buildGameTickData() {
