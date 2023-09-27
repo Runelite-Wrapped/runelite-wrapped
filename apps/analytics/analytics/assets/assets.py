@@ -1,8 +1,10 @@
-from typing import List
+from typing import List, Dict
 from dagster import asset, get_dagster_logger
 
-from analytics.extract.items import get_osrsbox_db
 from models.items import OsrsItemDb
+
+from analytics.extract.items import get_osrsbox_db
+from analytics.extract.npcs import get_npc_id_name_map
 
 from analytics.processing.tick_count import (
     calculate_all_user_tick_counts,
@@ -27,6 +29,11 @@ def usernames(mongo_client: MongoClient) -> list[str]:
 @asset()
 def osrs_item_db() -> OsrsItemDb:
     return get_osrsbox_db()
+
+
+@asset()
+def npc_id_name_map() -> Dict[int, str]:
+    return get_npc_id_name_map()
 
 
 @asset
