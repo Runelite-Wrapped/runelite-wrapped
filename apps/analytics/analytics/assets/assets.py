@@ -15,6 +15,11 @@ from analytics.processing.equipment import (
     calculate_equipment_tick_counts_for_user,
     load_equipment_tick_counts_for_user,
 )
+
+from analytics.processing.npc_loot import (
+    calculate_npc_loot_for_user,
+    load_npc_loot_for_user,
+)
 from analytics.processing.usernames import get_all_usernames
 from analytics.resources import MongoClient
 
@@ -74,4 +79,24 @@ def equipment_analysis(
         load_equipment_tick_counts_for_user(
             user_equipment_count=user_equipment_count,
             analytics_db_client=analytics_db_client,
+        )
+
+
+@asset()
+def npc_loot(
+    usernames: List[str],
+    osrs_item_db: OsrsItemDb,
+    npc_id_name_map: Dict[int, str],
+    mongo_client: MongoClient,
+):
+    for username in usernames:
+        user_npc_loot = calculate_npc_loot_for_user(
+            username=username,
+            osrs_item_db=osrs_item_db,
+            npc_id_name_map=npc_id_name_map,
+            raw_db_client=mongo_client.get_raw_client(),
+        )
+        load_npc_loot_for_user(
+            user_npc_loot=user_npc_loot,
+            analytics_db_client=mongo_client.get_analytics_client(),
         )

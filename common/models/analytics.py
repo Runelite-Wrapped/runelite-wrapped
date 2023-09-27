@@ -24,3 +24,21 @@ class UserEquipmentCount(BaseModel):
     timestamp: float
     value: List[SlotEquipmentCount]
     username: str
+
+
+class ItemLoot(BaseModel):
+    item: OsrsItem
+    quantity: int
+
+
+class NpcLoot(BaseModel):
+    name: str
+    id: int
+    kill_count: int
+    loot: List[ItemLoot]
+
+
+class UserNpcLoot(BaseModel):
+    timestamp: float
+    username: str
+    value: List[NpcLoot]

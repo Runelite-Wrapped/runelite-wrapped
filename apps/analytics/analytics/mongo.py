@@ -16,6 +16,7 @@ _RAW_LOOT_RECEIVED_COLLECTION_NAME = "loot_received"
 
 _ANALYTICS_TOTAL_TICKS_COLLECTION_NAME = "total_ticks"
 _ANALYTICS_USER_EQUIPMENT_COUNT_COLLECTION_NAME = "user_equipment_count"
+_ANALYTICS_NPC_LOOT_COLLECTION_NAME = "npc_loot"
 
 
 class RawDbClient:
@@ -49,4 +50,9 @@ class AnalyticsDbClient:
     def get_user_equipment_count_collection(self) -> Collection:
         return self._get_analytics_db().get_collection(
             _ANALYTICS_USER_EQUIPMENT_COUNT_COLLECTION_NAME
+        )
+
+    def get_npc_loot_collection(self) -> Collection:
+        return self._get_analytics_db().get_collection(
+            _ANALYTICS_NPC_LOOT_COLLECTION_NAME
         )
