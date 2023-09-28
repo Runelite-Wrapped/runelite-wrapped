@@ -12,6 +12,7 @@ _ANALYTICS_DB_NAME = "runelite-wrapped-analytics"
 
 _RAW_GAME_TICK_COLLECTION_NAME = "game_ticks"
 _RAW_LOOT_RECEIVED_COLLECTION_NAME = "loot_received"
+_RAW_HISCORES_COLLECTION_NAME = "hiscores"
 
 
 _ANALYTICS_TOTAL_TICKS_COLLECTION_NAME = "total_ticks"
@@ -32,6 +33,9 @@ class RawDbClient:
 
     def get_loot_received_collection(self) -> Collection:
         return self._get_raw_db().get_collection(_RAW_LOOT_RECEIVED_COLLECTION_NAME)
+
+    def get_hiscores_collection(self) -> Collection:
+        return self._get_raw_db().get_collection(_RAW_HISCORES_COLLECTION_NAME)
 
 
 class AnalyticsDbClient:

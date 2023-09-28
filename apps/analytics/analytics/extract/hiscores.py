@@ -5,9 +5,11 @@ from urllib.parse import quote
 from OSRS_Hiscores import Hiscores
 from models.hiscores import BossInfo, StatInfo, UserHiscoresInfo
 
+from analytics.mongo import RawDbClient
+
 
 def get_user_hiscores_info(username: str, boss_list: List[str]) -> UserHiscoresInfo:
-    # TODO(j.swannack): account for ironmen
+    # TODO(j.swannack): account for ironmen / other account types
     # Initialize user object, if no account type is specified, we assume 'N'
     user = Hiscores(quote(username), "N")
 
@@ -33,3 +35,9 @@ def get_user_hiscores_info(username: str, boss_list: List[str]) -> UserHiscoresI
         skills=skills,
         bosses=bosses,
     )
+
+
+def load_user_hiscores(
+    user_hiscores_info: UserHiscoresInfo, raw_db_client: RawDbClient
+):
+    raw_db_client.get_hiscores_collection().insert_one(user_hiscores_info.dict())

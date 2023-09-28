@@ -3,7 +3,7 @@ from dagster import asset, get_dagster_logger
 
 from analytics.extract.items import get_osrsbox_db
 from analytics.extract.bosses import get_boss_list
-from analytics.extract.hiscores import get_user_hiscores_info
+from analytics.extract.hiscores import get_user_hiscores_info, load_user_hiscores
 from models.items import OsrsItemDb
 
 from analytics.extract.items import get_osrsbox_db
@@ -38,6 +38,7 @@ def boss_list() -> List[str]:
 def scrape_hiscores(
     usernames: List[str],
     boss_list: List[str],
+    mongo_client: MongoClient,
 ):
     # TODO(j.swannack): consider using multiprocessing to speed this up
     for username in usernames:
@@ -45,6 +46,10 @@ def scrape_hiscores(
             username=username, boss_list=boss_list
         )
         _logger.info(f"Got hiscores for {username}")
+        load_user_hiscores(
+            user_hiscores_info=user_hiscores_info,
+            raw_db_client=mongo_client.get_raw_client(),
+        )
 
 
 @asset()
