@@ -1,6 +1,9 @@
 from typing import List, Dict
 from dagster import asset, get_dagster_logger
 
+from analytics.extract.items import get_osrsbox_db
+from analytics.extract.bosses import get_boss_list
+from analytics.extract.hiscores import get_user_hiscores_info
 from models.items import OsrsItemDb
 
 from analytics.extract.items import get_osrsbox_db
@@ -24,6 +27,24 @@ from analytics.processing.usernames import get_all_usernames
 from analytics.resources import MongoClient
 
 _logger = get_dagster_logger(__name__)
+
+
+@asset()
+def boss_list() -> List[str]:
+    return get_boss_list()
+
+
+@asset()
+def scrape_hiscores(
+    usernames: List[str],
+    boss_list: List[str],
+):
+    # TODO(j.swannack): consider using multiprocessing to speed this up
+    for username in usernames:
+        user_hiscores_info = get_user_hiscores_info(
+            username=username, boss_list=boss_list
+        )
+        _logger.info(f"Got hiscores for {username}")
 
 
 @asset()
