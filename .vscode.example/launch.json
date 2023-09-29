@@ -15,6 +15,9 @@
                 "analytics"
             ],
             "justMyCode": true,
+            "env": {
+                "DAGSTER_HOME": "${workspaceFolder}/.dagster_home"
+            },
             "envFile": ".env"
         },
         {

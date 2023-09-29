@@ -9,11 +9,14 @@ _URI = os.environ["MONGO_URI"]
 _RAW_DB_NAME = "runelite-wrapped-raw"
 _ANALYTICS_DB_NAME = "runelite-wrapped-analytics"
 
-_GAME_TICK_COLLECTION_NAME = "game_ticks"
+
+_RAW_GAME_TICK_COLLECTION_NAME = "game_ticks"
+_RAW_LOOT_RECEIVED_COLLECTION_NAME = "loot_received"
 
 
 _ANALYTICS_TOTAL_TICKS_COLLECTION_NAME = "total_ticks"
 _ANALYTICS_USER_EQUIPMENT_COUNT_COLLECTION_NAME = "user_equipment_count"
+_ANALYTICS_NPC_LOOT_COLLECTION_NAME = "npc_loot"
 
 
 class RawDbClient:
@@ -25,7 +28,10 @@ class RawDbClient:
         return self.client.get_database(_RAW_DB_NAME)
 
     def get_game_tick_collection(self) -> Collection:
-        return self._get_raw_db().get_collection(_GAME_TICK_COLLECTION_NAME)
+        return self._get_raw_db().get_collection(_RAW_GAME_TICK_COLLECTION_NAME)
+
+    def get_loot_received_collection(self) -> Collection:
+        return self._get_raw_db().get_collection(_RAW_LOOT_RECEIVED_COLLECTION_NAME)
 
 
 class AnalyticsDbClient:
@@ -44,4 +50,9 @@ class AnalyticsDbClient:
     def get_user_equipment_count_collection(self) -> Collection:
         return self._get_analytics_db().get_collection(
             _ANALYTICS_USER_EQUIPMENT_COUNT_COLLECTION_NAME
+        )
+
+    def get_npc_loot_collection(self) -> Collection:
+        return self._get_analytics_db().get_collection(
+            _ANALYTICS_NPC_LOOT_COLLECTION_NAME
         )
