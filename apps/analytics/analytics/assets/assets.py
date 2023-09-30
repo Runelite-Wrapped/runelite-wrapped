@@ -14,6 +14,11 @@ from analytics.processing.tick_count import (
     load_all_user_tick_counts,
 )
 
+from analytics.processing.deaths import (
+    calculate_user_actor_death_stats,
+    load_user_actor_death_stats,
+)
+
 from analytics.processing.equipment import (
     calculate_equipment_tick_counts_for_user,
     load_equipment_tick_counts_for_user,
@@ -126,5 +131,21 @@ def npc_loot(
         )
         load_npc_loot_for_user(
             user_npc_loot=user_npc_loot,
+            analytics_db_client=mongo_client.get_analytics_client(),
+        )
+
+
+@asset()
+def actor_death(
+    usernames: List[str],
+    mongo_client: MongoClient,
+):
+    for username in usernames:
+        user_death_stats = calculate_user_actor_death_stats(
+            username=username,
+            raw_db_client=mongo_client.get_raw_client(),
+        )
+        load_user_actor_death_stats(
+            user_death_stats=user_death_stats,
             analytics_db_client=mongo_client.get_analytics_client(),
         )
