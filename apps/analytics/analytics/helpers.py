@@ -4,10 +4,6 @@ from analytics.mongo import RawDbClient
 from common.models.items import OsrsItemDb, OsrsItem
 
 
-def get_all_usernames(raw_db_client: RawDbClient) -> List[str]:
-    return raw_db_client.get_game_tick_collection().distinct("username")
-
-
 def is_item_id(equipment_id: int) -> bool:
     # All equipment IDs <= 512 are kit IDs, not item IDs
     return equipment_id > 512
