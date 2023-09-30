@@ -5,6 +5,13 @@ from pydantic import BaseModel
 from models.items import OsrsItem
 
 
+class AnalyticsLocationData(BaseModel):
+    x: int
+    y: int
+    regionId: int
+    name: str
+
+
 class TickCount(BaseModel):
     timestamp: float
     value: int
@@ -42,3 +49,14 @@ class UserNpcLoot(BaseModel):
     timestamp: float
     username: str
     value: List[NpcLoot]
+
+
+class UserDeath(BaseModel):
+    timestamp: float
+    location_data: AnalyticsLocationData
+
+
+class UserDeathStats(BaseModel):
+    timestamp: float
+    username: str
+    value: List[UserDeath]
