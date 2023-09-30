@@ -1,7 +1,5 @@
 import time
-from typing import Dict
-
-from analytics.helpers import get_all_usernames
+from typing import Dict, List
 from analytics.mongo import RawDbClient, AnalyticsDbClient
 
 from models.analytics import TickCount
@@ -27,9 +25,9 @@ def calculate_tick_count(
 
 
 def calculate_all_user_tick_counts(
+    usernames: List[str],
     raw_db_client: RawDbClient = None,
 ) -> Dict[str, TickCount]:
-    usernames = get_all_usernames(raw_db_client)
     outputs = {
         username: calculate_tick_count(
             username,

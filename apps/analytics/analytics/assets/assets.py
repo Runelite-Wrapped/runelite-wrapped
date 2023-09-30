@@ -69,10 +69,12 @@ def npc_id_name_map() -> Dict[int, str]:
 
 @asset
 def tick_count(
+    usernames: List[str],
     mongo_client: MongoClient,
 ):
     tick_counts = calculate_all_user_tick_counts(
-        raw_db_client=mongo_client.get_raw_client()
+        usernames=usernames,
+        raw_db_client=mongo_client.get_raw_client(),
     )
     _logger.info(f"Calculated tick counts for {len(tick_counts)} users")
 
