@@ -15,7 +15,8 @@ from analytics.processing.tick_count import (
 )
 
 from analytics.processing.tile_count import (
-    calculate_favourite_tile
+    calculate_all_user_tiles_moved,
+    load_all_user_tile_counts
 )
 
 
@@ -156,9 +157,20 @@ def actor_death(
         )
 
 @asset
-def tile_count():
-    raw_db_client = mongo_client.get_raw_client()
-    
-    tile_counts = calculate_favourite_tile(raw_db_client=raw_db_client)
-    _logger.info(f"Calculated tick counts for {len(tile_counts)} users")
-    
+def tile_count(
+    usernames: List[str],
+    mongo_client: MongoClient,
+):  
+     
+    tile_counts = calculate_all_user_tiles_moved(
+        usernames = usernames,
+        raw_db_client = mongo_client.get_raw_client()   
+    )
+    _logger.info(f"Calculated tile counts for {len(tile_counts)} users")
+
+    load_all_user_tile_counts(
+        tile_counts,
+        analytics_db_client=mongo_client.get_analytics_client(),
+    )
+    _logger.info(f"Loaded tile counts for {len(tile_counts)} users")
+

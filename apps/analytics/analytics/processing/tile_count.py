@@ -1,10 +1,9 @@
 import time
 import pandas as pd
 
-from typing import Dict
+from typing import Dict, List
 from collections import Counter
 
-from analytics.helpers import get_all_usernames
 from analytics.mongo import RawDbClient, AnalyticsDbClient
 
 from models.analytics import TileCount
@@ -39,13 +38,10 @@ def calculate_tile_count(
 
     ### change in x coord
     gtdf['dx'] = (gtdf['x'].abs() - gtdf['x'].shift(1).abs()).abs().fillna(0)
-
     ### change in y coord
     gtdf['dy'] = (gtdf['y'].abs() - gtdf['y'].shift(1).abs()).abs().fillna(0)
-
     ### change in timestamp - should roughly reflect tick length
     gtdf['dt'] = (gtdf['timestamp'] - gtdf['timestamp'].shift(1)).abs().fillna(0)
-
     ### change in regionId - large changes indicate non-walking movement i.e new area door, or teleportation 
     gtdf['dr'] = (gtdf['regionId'] - gtdf['regionId'].shift(1)).abs().fillna(0)
 
@@ -63,13 +59,10 @@ def calculate_tile_count(
             return "Error"
         
     gtdf['tiles_moved'] = gtdf.apply(calc_tiles_moved, axis=1)
-    
 
+    ### TODO type favourite_tile as AnalyticsLocationData
     favourite_tile = gtdf['tile'].value_counts().idxmax()
     tiles_moved = gtdf['tiles_moved'].sum()
-
-    print("Favourite tile: ",favourite_tile)
-    print("Total tiles moved: ",tiles_moved)
 
     #########################################################################################################
     #################### some debugging:
@@ -79,56 +72,23 @@ def calculate_tile_count(
 
     tiles_moved_mask = tdf['tiles_moved'] > 4
 
-    # Include the row before the condition
-    previous_row = tiles_moved_mask.shift(1, fill_value=False)
+    previous_row = tiles_moved_mask.shift(-1, fill_value=False)
+    next_row = tiles_moved_mask.shift(1, fill_value=False)
+    second_next_row = tiles_moved_mask.shift(2, fill_value=False)
 
-    # Include the row after the condition
-    next_row = tiles_moved_mask.shift(-1, fill_value=False)
+    tm_combined_condition = (
+        tiles_moved_mask | previous_row | next_row | second_next_row
+    )
 
-    # Include the second row after the condition
-    second_next_row = tiles_moved_mask.shift(-2, fill_value=False)
-
-    # Combine all conditions
-    combined_condition = tiles_moved_mask | previous_row | next_row | second_next_row
-
-    tdf = tdf[combined_condition]
+    tdf = tdf[tiles_moved_mask]
 
     print('tiles moved debug')
     print(tdf)
 
-
-    ####################
-    reg_df = gtdf.copy()
-    region_ids = [
-        12889, 13136, 13137, 13138, 13139, 13140,
-        13141, 13145, 13393, 13394, 13395, 13396,
-        13397, 13401, 13365
-    ]
-
-    reg_mask = reg_df['regionId'].isin(region_ids)
-    reg_df = reg_df[reg_mask]
-
-    print("region ids in list")
-    print(reg_df)
-
-
-    # Identify rows where either dx > 2 or dy > 2 for gtdf
-    condition = (reg_df['dx'] > 2) | (reg_df['dy'] > 2)
-
-    # Include the previous row, current row and the next two rows by OR-ing with the shifted condition
-    combined_condition = (
-    condition | 
-    condition.shift(-1, fill_value=False) |  # one row before
-    condition.shift(1, fill_value=False) |  # one row after
-    condition.shift(2, fill_value=False)   # two rows after
-)
-
-    #####################################
+    #########################################################################################################
 
     # Filter rows based on the combined condition for gtdf
-    filtered_gtdf = reg_df[combined_condition]
-    print("filtered df is: ")
-    print(filtered_gtdf)
+
     print("full df is: ")
     print(gtdf)
 
@@ -144,10 +104,10 @@ def calculate_tile_count(
         }
     )
 
-def calculate_favourite_tile(
+def calculate_all_user_tiles_moved(
+    usernames: List[str],
     raw_db_client: RawDbClient = None,
 ) -> Dict[str, TileCount]:
-    usernames = get_all_usernames(raw_db_client)
     outputs = {
         username: calculate_tile_count(
             username=username,
@@ -159,17 +119,17 @@ def calculate_favourite_tile(
     return outputs
 
 
-# def load_all_user_tick_counts(
-#     tick_counts_per_account: Dict[str, TickCount],
-#     analytics_db_client: AnalyticsDbClient,
-# ) -> dict:
-#     return analytics_db_client.get_total_tick_collection().insert_many(
-#         [tick_count.dict() for tick_count in tick_counts_per_account.values()]
-#     )
+def load_all_user_tile_counts(
+    tiles_moved_per_account: Dict[str, TileCount],
+    analytics_db_client: AnalyticsDbClient,
+) -> dict:
+    return analytics_db_client.get_total_tick_collection().insert_many(
+        [tick_count.dict() for tick_count in tiles_moved_per_account.values()]
+    )
 
 
 if __name__ == "__main__":
     import logging
 
     logging.basicConfig(level=logging.INFO)
-    calculate_favourite_tile()
+    calculate_all_user_tiles_moved()
