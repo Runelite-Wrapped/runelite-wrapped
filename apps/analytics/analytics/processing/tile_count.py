@@ -38,10 +38,10 @@ def calculate_tile_count(
     gtdf = gtdf.drop(columns=['data'])
 
     ### change in x coord
-    gtdf['dx'] = (gtdf['x'].abs() - gtdf['x'].shift(1).abs()).fillna(0)
+    gtdf['dx'] = (gtdf['x'].abs() - gtdf['x'].shift(1).abs()).abs().fillna(0)
 
     ### change in y coord
-    gtdf['dy'] = (gtdf['y'].abs() - gtdf['y'].shift(1).abs()).fillna(0)
+    gtdf['dy'] = (gtdf['y'].abs() - gtdf['y'].shift(1).abs()).abs().fillna(0)
 
     ### change in timestamp - should roughly reflect tick length
     gtdf['dt'] = (gtdf['timestamp'] - gtdf['timestamp'].shift(1)).abs().fillna(0)
@@ -55,8 +55,10 @@ def calculate_tile_count(
             return 0
         elif (((row['dx'] > 2) or (row['dy'] > 2)) and row['dr'] > 0):
             return 0
+        # elif (((row['dx'] > 2) or (row['dy'] > 2)) and row['dr'] == 0):
+        #     return abs(row['dx']) + abs(row['dy'])
         elif (row['dx'] != 0) or (row['dy'] != 0):
-            return abs(row['dx']) + abs(row['dy'])
+            return max(abs(row['dx']), abs(row['dy']))
         else:
             return "Error"
         
@@ -73,11 +75,27 @@ def calculate_tile_count(
     #################### some debugging:
 
     ####################
-    tiles_moved_mask = gtdf['tiles_moved'] > 4
-    tdf = gtdf[tiles_moved_mask]
+    tdf = gtdf.copy()
+
+    tiles_moved_mask = tdf['tiles_moved'] > 4
+
+    # Include the row before the condition
+    previous_row = tiles_moved_mask.shift(1, fill_value=False)
+
+    # Include the row after the condition
+    next_row = tiles_moved_mask.shift(-1, fill_value=False)
+
+    # Include the second row after the condition
+    second_next_row = tiles_moved_mask.shift(-2, fill_value=False)
+
+    # Combine all conditions
+    combined_condition = tiles_moved_mask | previous_row | next_row | second_next_row
+
+    tdf = tdf[combined_condition]
 
     print('tiles moved debug')
     print(tdf)
+
 
     ####################
     reg_df = gtdf.copy()
@@ -95,7 +113,7 @@ def calculate_tile_count(
 
 
     # Identify rows where either dx > 2 or dy > 2 for gtdf
-    condition = (gtdf['dx'] > 2) | (gtdf['dy'] > 2)
+    condition = (reg_df['dx'] > 2) | (reg_df['dy'] > 2)
 
     # Include the previous row, current row and the next two rows by OR-ing with the shifted condition
     combined_condition = (
@@ -108,7 +126,7 @@ def calculate_tile_count(
     #####################################
 
     # Filter rows based on the combined condition for gtdf
-    filtered_gtdf = gtdf[combined_condition]
+    filtered_gtdf = reg_df[combined_condition]
     print("filtered df is: ")
     print(filtered_gtdf)
     print("full df is: ")

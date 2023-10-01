@@ -30,6 +30,5 @@ def tile_count():
     raw_db_client = RawDbClient()
     
     tile_counts = calculate_favourite_tile(raw_db_client=raw_db_client)
-    print(tile_counts)
     _logger.info(f"Calculated tick counts for {len(tile_counts)} users")
     
