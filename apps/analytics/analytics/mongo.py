@@ -20,6 +20,7 @@ _ANALYTICS_TOTAL_TICKS_COLLECTION_NAME = "total_ticks"
 _ANALYTICS_USER_EQUIPMENT_COUNT_COLLECTION_NAME = "user_equipment_count"
 _ANALYTICS_NPC_LOOT_COLLECTION_NAME = "npc_loot"
 _ANALYTICS_USER_DEATH_COLLECTION_NAME = "user_death"
+_ANALYTICS_TOTAL_TILES_COLLECTION_NAME = "total_tiles"
 
 
 class RawDbClient:
@@ -69,4 +70,8 @@ class AnalyticsDbClient:
     def get_user_death_collection(self) -> Collection:
         return self._get_analytics_db().get_collection(
             _ANALYTICS_USER_DEATH_COLLECTION_NAME
+        )
+    def get_total_tile_collection(self) -> Collection:
+        return self._get_analytics_db().get_collection(
+            _ANALYTICS_TOTAL_TILES_COLLECTION_NAME
         )

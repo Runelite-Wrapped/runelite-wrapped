@@ -151,6 +151,7 @@ class LocationData(BaseModel):
     x: int
     y: int
     regionId: int
+    
 class TileCount(BaseModel):
     timestamp: float
     tilecount: int

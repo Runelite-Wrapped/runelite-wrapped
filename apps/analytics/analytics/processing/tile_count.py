@@ -2,7 +2,6 @@ import time
 import pandas as pd
 
 from typing import Dict, List
-from collections import Counter
 
 from analytics.mongo import RawDbClient, AnalyticsDbClient
 
@@ -22,7 +21,7 @@ def calculate_tile_count(
         }
     )
 
-    ########### build initial DF
+    ### build initial DF
     gtdf = pd.DataFrame(game_tick_data)
 
     gtdf['energy'] = gtdf['data'].apply(lambda row: row['energy'])
@@ -45,7 +44,7 @@ def calculate_tile_count(
     ### change in regionId - large changes indicate non-walking movement i.e new area door, or teleportation 
     gtdf['dr'] = (gtdf['regionId'] - gtdf['regionId'].shift(1)).abs().fillna(0)
 
-    ########### calculate tiles moved
+    ### calculate tiles moved
     def calc_tiles_moved(row):
         if row['dx'] == 0 and row['dy'] == 0:
             return 0
@@ -65,9 +64,9 @@ def calculate_tile_count(
     tiles_moved = gtdf['tiles_moved'].sum()
 
     #########################################################################################################
-    #################### some debugging:
+    ### some debugging:
 
-    ####################
+    ###
     tdf = gtdf.copy()
 
     tiles_moved_mask = tdf['tiles_moved'] > 4
@@ -87,12 +86,8 @@ def calculate_tile_count(
 
     #########################################################################################################
 
-    # Filter rows based on the combined condition for gtdf
-
-    print("full df is: ")
     print(gtdf)
-
-    #########################################################################################################
+    
     #########################################################################################################
 
     return TileCount(
@@ -123,7 +118,7 @@ def load_all_user_tile_counts(
     tiles_moved_per_account: Dict[str, TileCount],
     analytics_db_client: AnalyticsDbClient,
 ) -> dict:
-    return analytics_db_client.get_total_tick_collection().insert_many(
+    return analytics_db_client.get_total_tile_collection().insert_many(
         [tick_count.dict() for tick_count in tiles_moved_per_account.values()]
     )
 
