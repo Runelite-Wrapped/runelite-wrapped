@@ -14,6 +14,12 @@ from analytics.processing.tick_count import (
     load_all_user_tick_counts,
 )
 
+from analytics.processing.tile_count import (
+    calculate_all_user_tiles_moved,
+    load_all_user_tile_counts
+)
+
+
 from analytics.processing.deaths import (
     calculate_user_actor_death_stats,
     load_user_actor_death_stats,
@@ -149,3 +155,22 @@ def actor_death(
             user_death_stats=user_death_stats,
             analytics_db_client=mongo_client.get_analytics_client(),
         )
+
+@asset
+def tile_count(
+    usernames: List[str],
+    mongo_client: MongoClient,
+):  
+     
+    tile_counts = calculate_all_user_tiles_moved(
+        usernames = usernames,
+        raw_db_client = mongo_client.get_raw_client()   
+    )
+    _logger.info(f"Calculated tile counts for {len(tile_counts)} users")
+
+    load_all_user_tile_counts(
+        tile_counts,
+        analytics_db_client=mongo_client.get_analytics_client(),
+    )
+    _logger.info(f"Loaded tile counts for {len(tile_counts)} users")
+
