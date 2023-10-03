@@ -1,12 +1,11 @@
 from typing import List, Dict
 from dagster import asset, get_dagster_logger
 
-from analytics.extract.items import get_osrsbox_db
+from analytics.extract.items import get_runelite_item_db
 from analytics.extract.bosses import get_boss_list
 from analytics.extract.hiscores import get_user_hiscores_info, load_user_hiscores
 from models.items import OsrsItemDb
 
-from analytics.extract.items import get_osrsbox_db
 from analytics.extract.npcs import get_npc_id_name_map
 
 from analytics.processing.tick_count import (
@@ -16,7 +15,7 @@ from analytics.processing.tick_count import (
 
 from analytics.processing.tile_count import (
     calculate_all_user_tiles_moved,
-    load_all_user_tile_counts
+    load_all_user_tile_counts,
 )
 
 
@@ -70,7 +69,7 @@ def usernames(mongo_client: MongoClient) -> list[str]:
 
 @asset()
 def osrs_item_db() -> OsrsItemDb:
-    return get_osrsbox_db()
+    return get_runelite_item_db()
 
 
 @asset()
@@ -156,15 +155,14 @@ def actor_death(
             analytics_db_client=mongo_client.get_analytics_client(),
         )
 
+
 @asset
 def tile_count(
     usernames: List[str],
     mongo_client: MongoClient,
-):  
-     
+):
     tile_counts = calculate_all_user_tiles_moved(
-        usernames = usernames,
-        raw_db_client = mongo_client.get_raw_client()   
+        usernames=usernames, raw_db_client=mongo_client.get_raw_client()
     )
     _logger.info(f"Calculated tile counts for {len(tile_counts)} users")
 
@@ -173,4 +171,3 @@ def tile_count(
         analytics_db_client=mongo_client.get_analytics_client(),
     )
     _logger.info(f"Loaded tile counts for {len(tile_counts)} users")
-
