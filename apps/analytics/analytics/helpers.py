@@ -1,7 +1,7 @@
 from typing import List, Optional
 from analytics.mongo import RawDbClient
 
-from common.models.items import OsrsItemDb, OsrsItem
+from common.models.items import OsrsItemDb, OsrsItem, get_unknown_item
 
 
 def is_item_id(equipment_id: int) -> bool:
@@ -25,6 +25,6 @@ def get_item_from_equipment_id(
     item_id = equipment_id - 512
 
     if item_id not in osrs_item_db:
-        raise ValueError(f"Item ID {item_id} not found in OSRS item DB")
+        return get_unknown_item(item_id)
 
     return osrs_item_db.get(item_id)
