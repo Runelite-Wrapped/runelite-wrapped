@@ -12,5 +12,14 @@ class OsrsItem(BaseModel):
 OsrsItemDb = Dict[int, OsrsItem]
 
 
+def get_unknown_item(id: int) -> OsrsItem:
+    return OsrsItem(
+        id=id,
+        name=f"Unknown Item {id}",
+        type="Unknown",
+        duplicate=False,
+    )
+
+
 def parse_osrsbox_db(data: dict) -> OsrsItemDb:
     return parse_obj_as(OsrsItemDb, data)

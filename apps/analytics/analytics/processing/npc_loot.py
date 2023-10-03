@@ -50,7 +50,12 @@ def calculate_npc_loot_for_user(
         ]
     )
 
-    # TODO(j.swannack): handle empty df
+    if loot_df.empty:
+        return UserNpcLoot(
+            timestamp=time.time(),
+            username=username,
+            value=[],
+        )
 
     loot_data = (
         loot_df.groupby(["npc_id", "item_id"])
