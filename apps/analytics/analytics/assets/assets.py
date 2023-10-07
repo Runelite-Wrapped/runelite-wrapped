@@ -13,6 +13,11 @@ from analytics.processing.tick_count import (
     load_all_user_tick_counts,
 )
 
+from analytics.processing.hiscores_gains import (
+    calculate_user_hiscores_gains,
+    load_user_hiscores_gains,
+)
+
 from analytics.processing.tile_count import (
     calculate_all_user_tiles_moved,
     load_all_user_tile_counts,
@@ -171,3 +176,21 @@ def tile_count(
         analytics_db_client=mongo_client.get_analytics_client(),
     )
     _logger.info(f"Loaded tile counts for {len(tile_counts)} users")
+
+
+@asset
+def hiscores_gains(
+    usernames: List[str],
+    boss_list: List[str],
+    mongo_client: MongoClient,
+):
+    for username in usernames:
+        hiscores_gains = calculate_user_hiscores_gains(
+            username=username,
+            boss_list=boss_list,
+            raw_db_client=mongo_client.get_raw_client(),
+        )
+        load_user_hiscores_gains(
+            hiscores_gains,
+            analytics_db_client=mongo_client.get_analytics_client(),
+        )
