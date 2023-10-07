@@ -1,7 +1,6 @@
-from typing import List, Optional
-from analytics.mongo import RawDbClient
+from typing import Optional
 
-from common.models.items import OsrsItemDb, OsrsItem, get_unknown_item
+from models.items import OsrsItemDb, OsrsItem, get_unknown_item
 
 
 def is_item_id(equipment_id: int) -> bool:
