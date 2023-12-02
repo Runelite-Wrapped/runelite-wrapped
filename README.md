@@ -1,6 +1,49 @@
 # RuneLite Wrapped
 ![banner](docs/images/runelite_wrapped_icon_wide.png)
 
+## Basic Idea
+
+You'd install a plugin that tracks your in game activity in RuneLite (i.e. where you are standing at each game tick) and sends it off to a server where we process global stats and make a little wrapped style presentation.
+
+The main downside to this is that you'd need to Install the plugin a year prior to getting the wrapped summary, and the app would need to be running+ingesting that whole time (which would cost us a little bit) but it would still be neat!
+
+## Goal
+
+The goal of this project was mainly an upskilling exercise for me and friends to learn how to build and scale a data intensive web app. That is why we opted for data to be ingressed and processed on a server, there is an option of future work to make all the calculations happen clientside, however we don't really want to learn more Java than we need to and the experience is less relevant to us (but if the project pops off, we may end up doing it anyway).
+
+## Current stats we want to track
+
+- Your best month
+    - Days/time periods where there were spouts of activity
+- **Total XP gained**
+    - **Favourite skill**
+- Spells casted / weapons used
+- Players killed (spades collected)
+- **Total NPCs killed (top X% of players for killing mob X or something silly)**
+- Time spent at locations
+- Hours spent with overhead prayers active
+- Number of birdhouse runs done?
+- **Deaths**
+    - **Places died**
+    - **Number of deaths**
+    - **How you died (poison, NPC, boss, pk)**
+- Play time
+- **Energy used, total squares run/walked**
+- Potions drunk
+    - Favourite potion
+- Food eaten
+    - Favourite food
+- GE spending/earnings ? questionable
+- Message count (not the content though)
+- **Gear**
+    - **Favourite gear**
+    - **You spent X hours wearing dragon platelegs, noob**
+- Value of boss drops
+    - Most profitable activity
+- Combat achievements???
+    - How do we do that???
+
+# Developer Docs
 
 ## Basic App Architecture
 
