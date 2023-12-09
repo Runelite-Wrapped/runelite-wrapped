@@ -1,3 +1,5 @@
+# Script that just makes an sqlitedb for testing purposes
+
 import sqlite3
 
 conn = sqlite3.connect("my_database.db")
