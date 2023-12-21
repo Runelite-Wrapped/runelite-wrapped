@@ -23,6 +23,9 @@ dependencies {
     // Jackson
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.2'
 
+    // sqlite
+    implementation "org.xerial:sqlite-jdbc:3.27.2.1"
+
     compileOnly 'org.projectlombok:lombok:1.18.20'
     annotationProcessor 'org.projectlombok:lombok:1.18.20'
 
