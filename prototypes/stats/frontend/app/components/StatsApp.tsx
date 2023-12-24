@@ -34,7 +34,7 @@ export default function StatsApp() {
         onLoad={onLoad}
       />
       {data ? (
-        <ExamplePlot />
+        <ExamplePlot x={data.timestamps} y={data.runEnergy} />
       ) : (
         <div
           className={isDragActive ? "drop-zone drop-zone-active" : "drop-zone"}

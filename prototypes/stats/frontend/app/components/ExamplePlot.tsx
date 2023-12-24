@@ -3,10 +3,10 @@
 import React from "react";
 import Plot from "react-plotly.js";
 
-export default function LineChart() {
+export default function LineChart({ x, y }: { x: number[]; y: number[] }) {
   const data = {
-    x: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    y: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    x,
+    y,
     mode: "lines",
   };
   const layout = { title: "NICE" };
