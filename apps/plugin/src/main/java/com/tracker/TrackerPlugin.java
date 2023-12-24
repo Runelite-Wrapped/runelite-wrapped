@@ -39,19 +39,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
-
-// telemetry data class definition
-@Getter
-@RequiredArgsConstructor
-class TelemetryData {
-	private final long timestamp;
-	private final Object data;
-	private final String username;
-	private final String event;
-	private final long tickCount;
-	private final String sessionId;
-}
-
+import com.tracker.models.TelemetryData;
 
 // game tick data
 @Getter
@@ -213,6 +201,11 @@ public class TrackerPlugin extends Plugin {
 
 	private String sessionId;
 
+	private DbClient dbClient = null;
+
+	@Inject
+	private DbClientFactory dbClientFactory;
+
 	@Inject
 	private Client client;
 
@@ -257,53 +250,18 @@ public class TrackerPlugin extends Plugin {
 	// and an endpoint
 	// will serialise the object, and send it to the server
 	private void sendTelemetry(Object event, String eventName) {
-		// define url from config.server() and append endpoint, handle
-		// missing trailing slash, and add "api/v1/event"
-		String url = config.server();
-		if (!url.endsWith("/")) {
-			url += "/";
+
+		if (this.dbClient == null) {
+			this.dbClient = dbClientFactory.createDbClient("rlw.db");
+			this.dbClient.initialiseDb();
 		}
-		url += "api/v1/event";
-		// add event name to url
-		url += "/" + eventName + "/";
 
 		// create a new telemetry data object
 		TelemetryData telemetryData = new TelemetryData(System.currentTimeMillis(), event,
 				client.getLocalPlayer().getName(), eventName, client.getTickCount(),
 				getSessionId());
 
-		// define and object mapper
-		ObjectMapper mapper = new ObjectMapper();
-
-		// get json for the event and handle JsonProcessingException
-		try {
-			String json = mapper.writeValueAsString(telemetryData);
-			// create a new post request
-			Request request = new Request.Builder().url(url).post(
-					RequestBody.create(json, MediaType.get("application/json; charset=utf-8")))
-					.build();
-			log.info("Sending {} to {}", json, url);
-
-			// send the request and handle IOException
-			okHttpClient.newCall(request).enqueue(new Callback() {
-				@Override
-				public void onFailure(Call call, IOException e) {
-					e.printStackTrace();
-				}
-
-				@Override
-				public void onResponse(Call call, Response response) throws IOException {
-					try (ResponseBody responseBody = response.body()) {
-						if (!response.isSuccessful())
-							throw new IOException("Unexpected code " + response);
-						System.out.println(responseBody.string());
-					}
-				}
-			});
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		this.dbClient.StoreTelemetry(telemetryData);
 	}
 
 	@Subscribe()
