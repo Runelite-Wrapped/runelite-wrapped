@@ -1,3 +1,27 @@
 .stats-app {
-    background: red;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+
+.drop-zone {
+    width: 50%;
+    height: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 15px;
+    border: 2px dashed #444;
+}
+
+.drop-zone-active {
+    border-radius: 15px;
+    border: 2px solid #000;
+    /* add dropshadow */
+    box-shadow: 0px 0px 10px 0px #000;
+    /* with transition */
+    transition: 0.2s ease-in-out;
 }
