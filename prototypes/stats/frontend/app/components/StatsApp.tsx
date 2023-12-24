@@ -3,21 +3,23 @@
 import Script from "next/script";
 import "./StatsApp.css";
 import {
-  runScript,
   writeFileToFS,
   getPyodide,
   runAnalysis,
+  StatData,
 } from "../pythonWrapper";
+import ExamplePlot from "./ExamplePlot";
 import { useDropzone } from "react-dropzone";
+import { useState } from "react";
 
 export default function StatsApp() {
-  function run() {
-    runScript("print('hello world')");
-  }
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+  const [data, setData] = useState<StatData | null>(null);
 
   async function onDrop(acceptedFiles: File[]) {
     await writeFileToFS("/stats.db", await acceptedFiles[0].arrayBuffer());
-    const data = await runAnalysis();
+    const newData = await runAnalysis();
+    setData(newData);
     console.log(data);
   }
 
@@ -25,21 +27,23 @@ export default function StatsApp() {
     await getPyodide();
   }
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
-
   return (
     <div className="stats-app">
       <Script
         src="https://cdn.jsdelivr.net/pyodide/v0.18.1/full/pyodide.js"
         onLoad={onLoad}
       />
-      <div
-        className={isDragActive ? "drop-zone drop-zone-active" : "drop-zone"}
-        {...getRootProps()}
-      >
-        <input {...getInputProps()} />
-        {isDragActive ? <p>you got this</p> : <p>drop some files</p>}
-      </div>
+      {data ? (
+        <ExamplePlot />
+      ) : (
+        <div
+          className={isDragActive ? "drop-zone drop-zone-active" : "drop-zone"}
+          {...getRootProps()}
+        >
+          <input {...getInputProps()} />
+          {isDragActive ? <p>you got this</p> : <p>drop some files</p>}
+        </div>
+      )}
     </div>
   );
 }
