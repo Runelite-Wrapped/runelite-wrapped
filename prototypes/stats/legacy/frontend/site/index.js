@@ -31,11 +31,13 @@ async function loadDb(dbPath) {
 
 let $ = document.querySelector.bind(document);
 
+let myData = null;
+
 window.addEventListener("load", async function () {
   // get output element
   let output = $("#output");
   output.innerHTML = "Hello World!";
   await main();
-  await loadDb("/test.db");
-  await runScript("read_db.py")
+  await loadDb("/rlw.db");
+  myData = JSON.parse(await runScript("read_db.py"))
 });
