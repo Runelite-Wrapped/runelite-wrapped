@@ -2,9 +2,13 @@
 
 import Script from "next/script";
 import "./StatsApp.css";
-import { runScript, writeFileToFS, getPyodide } from "../python";
+import {
+  runScript,
+  writeFileToFS,
+  getPyodide,
+  runAnalysis,
+} from "../pythonWrapper";
 import { useDropzone } from "react-dropzone";
-import { useEffect } from "react";
 
 export default function StatsApp() {
   function run() {
@@ -12,7 +16,9 @@ export default function StatsApp() {
   }
 
   async function onDrop(acceptedFiles: File[]) {
-    writeFileToFS("stats.db", await acceptedFiles[0].arrayBuffer());
+    await writeFileToFS("/stats.db", await acceptedFiles[0].arrayBuffer());
+    const data = await runAnalysis();
+    console.log(data);
   }
 
   async function onLoad() {

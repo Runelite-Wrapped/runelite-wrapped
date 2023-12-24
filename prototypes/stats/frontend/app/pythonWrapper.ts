@@ -1,15 +1,15 @@
 "use client";
-
 let _pyodide: any;
+
+interface StatData {
+  timestamps: number[];
+  runEnergy: number[];
+}
 
 
 const getPyodide = async () => {
   if (!_pyodide) {
     console.log("loading pyodide")
-    // check for window.pyodide
-    if (!window.loadPyodide) {
-      // sleep for 1 second
-    }
 
     _pyodide = await window.loadPyodide({
       indexURL: "https://cdn.jsdelivr.net/pyodide/v0.18.1/full/"
@@ -25,7 +25,6 @@ const writeFileToFS = async (filename: string, content: ArrayBuffer) => {
   // const db = await resp.arrayBuffer()
   const arr = new Uint8Array(content)
   await pyodide.FS.writeFile(filename, arr)
-  runScript('import os; print(os.listdir("/"))')
 }
 
 const runScript = async (code: string) => {
@@ -39,5 +38,10 @@ const runScript = async (code: string) => {
   }
 }
 
+async function runAnalysis(): Promise<StatData> {
+  const script = await (await fetch("/python/main.py")).text()
+  const data = await runScript(script);
+  return JSON.parse(data);
+}
 
-export { runScript, writeFileToFS, getPyodide }
+export { runScript, writeFileToFS, getPyodide, runAnalysis }
