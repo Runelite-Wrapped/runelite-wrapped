@@ -8,10 +8,14 @@ interface StatData {
 
 const getPyodide = async () => {
   if (!_pyodide) {
+    // todo: handle race condition
     console.log("loading pyodide");
 
     _pyodide = await window.loadPyodide({
       indexURL: "https://cdn.jsdelivr.net/pyodide/v0.18.1/full/",
+      env: {
+        PYTHONPATH: "/",
+      },
     });
     console.log("loading pyodide complete");
   }
@@ -25,6 +29,21 @@ const writeFileToFS = async (filename: string, content: ArrayBuffer) => {
   const arr = new Uint8Array(content);
   await pyodide.FS.writeFile(filename, arr);
 };
+
+async function loadScript(scriptName: string) {
+  const resp = await fetch(`/python/${scriptName}`);
+  writeFileToFS(`/${scriptName}`, await resp.arrayBuffer());
+  console.log(`loaded ${scriptName}`);
+}
+
+async function loadAllPythonScripts() {
+  // todo: figure out how to no need to list all files..
+  const scripts = ["main.py", "testmodule.py"];
+  for (const script of scripts) {
+    await loadScript(script);
+  }
+  console.log("loaded all scripts");
+}
 
 const runScript = async (code: string) => {
   const pyodide = await getPyodide();
@@ -43,4 +62,11 @@ async function runAnalysis(): Promise<StatData> {
   return JSON.parse(data);
 }
 
-export { runScript, writeFileToFS, getPyodide, runAnalysis, type StatData };
+export {
+  runScript,
+  writeFileToFS,
+  getPyodide,
+  runAnalysis,
+  loadAllPythonScripts,
+  type StatData,
+};
