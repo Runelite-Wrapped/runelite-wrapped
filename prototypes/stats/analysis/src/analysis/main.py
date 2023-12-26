@@ -2,7 +2,7 @@
 
 import json
 import sqlite3
-from testmodule import testfunction
+from analysis.testmodule import testfunction
 
 
 def main():

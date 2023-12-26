@@ -19,7 +19,7 @@ const getPyodide = async () => {
         PYTHONPATH: "/",
       },
     });
-    _pyodide.loadPackage(["micropip", "packaging"]);
+    _pyodide.loadPackage(["micropip", "packaging", "sqlite3"]);
 
     // for debugging
     window.pyodide = _pyodide;
@@ -36,11 +36,12 @@ const writeFileToFS = async (filename: string, content: ArrayBuffer) => {
   await pyodide.FS.writeFile(filename, arr);
 };
 
-async function loadAllPythonScripts() {
+async function loadAnalysisModule() {
   const pyodide = await getPyodide();
   const response = await fetch("/python/analysis-0.0.1-py3-none-any.whl");
   const buffer = await response.arrayBuffer();
   await pyodide.unpackArchive(buffer, "whl");
+  console.log("loaded analysis module");
 }
 
 const runScript = async (code: string) => {
@@ -55,8 +56,7 @@ const runScript = async (code: string) => {
 };
 
 async function runAnalysis(): Promise<StatData> {
-  const script = await (await fetch("/python/main.py")).text();
-  const data = await runScript(script);
+  const data = await runScript("import analysis; analysis.run()");
   return JSON.parse(data);
 }
 
@@ -65,6 +65,6 @@ export {
   writeFileToFS,
   getPyodide,
   runAnalysis,
-  loadAllPythonScripts,
+  loadAnalysisModule,
   type StatData,
 };

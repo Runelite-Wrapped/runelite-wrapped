@@ -7,7 +7,7 @@ import {
   getPyodide,
   runAnalysis,
   StatData,
-  loadAllPythonScripts,
+  loadAnalysisModule,
 } from "../pythonWrapper";
 import ExamplePlot from "./ExamplePlot";
 import { useDropzone } from "react-dropzone";
@@ -26,7 +26,7 @@ export default function StatsApp() {
 
   async function onLoad() {
     await getPyodide();
-    await loadAllPythonScripts();
+    await loadAnalysisModule();
   }
 
   return (
