@@ -1,4 +1,6 @@
 "use client";
+
+// TODO: convert this into something like "usePyodide"
 let _pyodide: any;
 
 interface StatData {
@@ -12,11 +14,15 @@ const getPyodide = async () => {
     console.log("loading pyodide");
 
     _pyodide = await window.loadPyodide({
-      indexURL: "https://cdn.jsdelivr.net/pyodide/v0.18.1/full/",
+      indexURL: "https://cdn.jsdelivr.net/pyodide/v0.24.1/full/",
       env: {
         PYTHONPATH: "/",
       },
     });
+    _pyodide.loadPackage(["micropip", "packaging"]);
+
+    // for debugging
+    window.pyodide = _pyodide;
     console.log("loading pyodide complete");
   }
   return _pyodide;
@@ -30,19 +36,11 @@ const writeFileToFS = async (filename: string, content: ArrayBuffer) => {
   await pyodide.FS.writeFile(filename, arr);
 };
 
-async function loadScript(scriptName: string) {
-  const resp = await fetch(`/python/${scriptName}`);
-  writeFileToFS(`/${scriptName}`, await resp.arrayBuffer());
-  console.log(`loaded ${scriptName}`);
-}
-
 async function loadAllPythonScripts() {
-  // todo: figure out how to no need to list all files..
-  const scripts = ["main.py", "testmodule.py"];
-  for (const script of scripts) {
-    await loadScript(script);
-  }
-  console.log("loaded all scripts");
+  const pyodide = await getPyodide();
+  const response = await fetch("/python/analysis-0.0.1-py3-none-any.whl");
+  const buffer = await response.arrayBuffer();
+  await pyodide.unpackArchive(buffer, "whl");
 }
 
 const runScript = async (code: string) => {
