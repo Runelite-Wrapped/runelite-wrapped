@@ -1,0 +1,12 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "analysis"
+authors = [
+    {name = "Jerome Swannack", email = "jeromeswannack@gmail.com"},
+]
+description = "The Analysis code for the rlw sqlite browser prototype"
+requires-python = ">=3.7"
+version = "0.0.1"
