@@ -24,6 +24,16 @@ export default function StatsApp() {
     console.log(data);
   }
 
+  async function useDefault() {
+    await writeFileToFS(
+      "/stats.db",
+      await fetch("/databases/rlw_1.db").then((res) => res.arrayBuffer())
+    );
+    const newData = await runAnalysis();
+    setData(newData);
+    console.log(data);
+  }
+
   async function onLoad() {
     await getPyodide();
     await loadAnalysisModule();
@@ -38,13 +48,18 @@ export default function StatsApp() {
       {data ? (
         <ExamplePlot x={data.timestamps} y={data.runEnergy} />
       ) : (
-        <div
-          className={isDragActive ? "drop-zone drop-zone-active" : "drop-zone"}
-          {...getRootProps()}
-        >
-          <input {...getInputProps()} />
-          {isDragActive ? <p>you got this</p> : <p>drop some files</p>}
-        </div>
+        <>
+          <button onClick={useDefault}>Use Default</button>
+          <div
+            className={
+              isDragActive ? "drop-zone drop-zone-active" : "drop-zone"
+            }
+            {...getRootProps()}
+          >
+            <input {...getInputProps()} />
+            {isDragActive ? <p>you got this</p> : <p>drop some files</p>}
+          </div>
+        </>
       )}
     </div>
   );
