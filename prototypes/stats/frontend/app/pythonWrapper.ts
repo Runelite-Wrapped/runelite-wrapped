@@ -65,8 +65,32 @@ const runScript = async (code: string) => {
   }
 };
 
-async function runAnalysis(): Promise<CombinedData> {
-  const data = await runScript("import analysis; analysis.run()");
+// async function runAnalysis(): Promise<CombinedData> {
+//   const data = await runScript("import analysis; analysis.run()");
+//   return JSON.parse(data);
+// }
+
+const runPythonFunction = async (functionName: string, args: any[] = []) => {
+  const pyodide = await getPyodide();
+  const argStr = args.map(JSON.stringify).join(", ");
+  const code = `import analysis; analysis.${functionName}(${argStr})`;
+  
+  try {
+    const result = await pyodide.runPythonAsync(code);
+    return result;
+  } catch (error) {
+    console.error(error);
+    return error.message;
+  }
+};
+
+async function runGameTickAnalysis(username: string): Promise<StatData> {
+  const data = await runPythonFunction('get_game_tick_data');
+  return JSON.parse(data);
+}
+
+async function runTileDataAnalysis(username: string): Promise<TileData> {
+  const data = await runPythonFunction('get_tile_data');
   return JSON.parse(data);
 }
 
@@ -74,7 +98,10 @@ export {
   runScript,
   writeFileToFS,
   getPyodide,
-  runAnalysis,
+  runGameTickAnalysis,
+  runTileDataAnalysis,
   loadAnalysisModule,
   type CombinedData,
+  type StatData,
+  type TileData,
 };

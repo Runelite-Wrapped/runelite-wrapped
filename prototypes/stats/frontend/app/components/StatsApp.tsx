@@ -5,8 +5,11 @@ import Script from "next/script";
 import {
   writeFileToFS,
   getPyodide,
-  runAnalysis,
+  runTileDataAnalysis,
+  runGameTickAnalysis,
+  CombinedData,
   StatData,
+  TileData,
   loadAnalysisModule,
 } from "../pythonWrapper";
 import ExamplePlot from "./ExamplePlot";
@@ -16,13 +19,14 @@ import { useState } from "react";
 export default function StatsApp() {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
   const [data, setData] = useState<StatData | null>(null);
-  const [loaded, setLoaded] = useState(false)
+  const [loaded, setLoaded] = useState(false);
+  const [tileData, setTileData] = useState<TileData | null>(null);
 
   async function onDrop(acceptedFiles: File[]) {
     await writeFileToFS("/stats.db", await acceptedFiles[0].arrayBuffer());
-    const newData = await runAnalysis();
+    const newData = await runGameTickAnalysis('jerome-o');
     setData(newData);
-    console.log(data);
+    console.log(data); // 'data' isn't updated until the scope of onDrop is finished
   }
 
   async function useDefault() {
@@ -30,9 +34,17 @@ export default function StatsApp() {
       "/stats.db",
       await fetch("/databases/rlw_1.db").then((res) => res.arrayBuffer())
     );
-    const newData = await runAnalysis();
+    const newData = await runGameTickAnalysis('jerome-o');
+    console.log("Setting energy data")
     setData(newData);
-    console.log(data);
+    console.log("Energy data has been set:")
+    console.log(newData);
+    const tileData = await runTileDataAnalysis('jerome-o');
+    console.log("Setting tile data")
+    setTileData(tileData);
+    console.log("Tile data has been set:")
+    console.log(tileData);
+
   }
 
   async function onLoad() {
@@ -56,7 +68,7 @@ export default function StatsApp() {
           </button>
           : 
           <div className={`${loaded ? 'fade-in' : ''}`}>
-            <ExamplePlot x={data.gameTickData.timestamps} y={data.gameTickData.runEnergy}/>
+            <ExamplePlot x={data.timestamps} y={data.runEnergy}/>
           </div>}
         </div>
       ) : (
@@ -68,7 +80,7 @@ export default function StatsApp() {
           <div
             className={
               isDragActive ? 
-              "bg-osrslb-100 hover:bg-osrslb-150 w-1/5 h-1/2 flex justify-center items-center  align-middle border-2 rounded-[110px] hover:rounded-[50px] duration-500 ease-in-out border-dashed m-auto" : 
+              "bg-osrslb-100 hover:bg-osrslb-150 w-1/5 h-1/2 flex justify-center items-center  align-middle border-2 rounded-[100px] hover:rounded-[50px] duration-500 ease-in-out border-dashed m-auto" : 
               "bg-osrslb-100 hover:bg-osrslb-150 w-1/5 h-1/2 flex justify-center items-center  align-middle border-2 rounded-[150px] hover:rounded-[120px] duration-500 ease-in-out border-dashed m-auto"
             }
             {...getRootProps()}
