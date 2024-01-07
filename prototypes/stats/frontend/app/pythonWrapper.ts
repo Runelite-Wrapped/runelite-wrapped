@@ -7,6 +7,16 @@ interface StatData {
   timestamps: number[];
   runEnergy: number[];
 }
+interface TileData {
+  timestamps: number[];
+  xcoord: number[];
+  ycoord: number[];
+  regionId: number[];
+}
+interface CombinedData {
+  gameTickData: StatData;
+  tileData: TileData;
+}
 
 const getPyodide = async () => {
   if (!_pyodide) {
@@ -55,7 +65,7 @@ const runScript = async (code: string) => {
   }
 };
 
-async function runAnalysis(): Promise<StatData> {
+async function runAnalysis(): Promise<CombinedData> {
   const data = await runScript("import analysis; analysis.run()");
   return JSON.parse(data);
 }
@@ -66,5 +76,5 @@ export {
   getPyodide,
   runAnalysis,
   loadAnalysisModule,
-  type StatData,
+  type CombinedData,
 };
