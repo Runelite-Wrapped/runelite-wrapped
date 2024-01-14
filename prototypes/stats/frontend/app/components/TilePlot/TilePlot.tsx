@@ -13,7 +13,7 @@ export default function LineChart({ x, y }: { x: number[]; y: number[] }) {
     }
   };
   const layout = { 
-    title: "NICE",
+    title: "Regions over time",
     paper_bgcolor: '#FFF7E8',
     plot_bgcolor: 'FFF7E8',
     colourway: '#282318'

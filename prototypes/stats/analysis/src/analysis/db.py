@@ -1,5 +1,6 @@
 import sqlite3
 import json
+from analysis.tile_count import calculate_tile_count
 
 _ENERGY_QUERY = """\
 SELECT JSON_EXTRACT(JSON(data), '$.timestamp', '$.data.energy') FROM game_tick
@@ -17,7 +18,7 @@ class DbClient:
         cursor.execute(query)
         return [json.loads(x[0]) for x in cursor.fetchall()]
 
-    def get_game_tick_data(self):
+    def get_energy_data(self):
         result = self._execute_query(_ENERGY_QUERY)
         return {
             "timestamps": [int(x[0]) for x in result],
@@ -37,26 +38,31 @@ class AnalyticsClient:
         self.db_client = DbClient(db_file)
 
     def get_combined_data(self):
-        game_tick_data = self.db_client.get_game_tick_data()
+        energy_data = self.db_client.get_energy_data()
         tile_data = self.db_client.get_tile_data()
 
         return {
-            "gameTickData": game_tick_data,
+            "energyData": energy_data,
             "tileData": tile_data
         }
+    
+    def calculate_tile_count_for_user(self, username):
+        tile_data = self.db_client.get_tile_data()
+        tile_count_data = calculate_tile_count(username, tile_data)
+        return tile_count_data
     
     # todo    
     # def calculate_tile_count(
     #         username: str,
     #         db_client: DbClient
     #         ):
-    #     game_tick_data = db_client.get_tile_data(username)
+    #     energy_data = db_client.get_tile_data(username)
 
     #     tiles_moved = 0
     #     tile_counts = {}
     #     prev_x = prev_y = prev_region_id = None
 
-    #     for tick in game_tick_data:
+    #     for tick in energy_data:
     #         _, _, _, x, y, region_id = tick
     #         tile = (x, y)
 

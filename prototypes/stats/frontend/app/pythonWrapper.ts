@@ -3,7 +3,7 @@
 // TODO: convert this into something like "usePyodide"
 let _pyodide: any;
 
-interface StatData {
+interface EnergyData {
   timestamps: number[];
   runEnergy: number[];
 }
@@ -13,8 +13,14 @@ interface TileData {
   ycoord: number[];
   regionId: number[];
 }
+
+interface TileCount {
+  tilecount: number[]
+  username: string[],
+  favourite_tile: any[],
+}
 interface CombinedData {
-  gameTickData: StatData;
+  energyData: EnergyData;
   tileData: TileData;
 }
 
@@ -29,7 +35,8 @@ const getPyodide = async () => {
         PYTHONPATH: "/",
       },
     });
-    _pyodide.loadPackage(["micropip", "packaging", "sqlite3"]);
+    await _pyodide.loadPackage(["micropip", "packaging", "sqlite3", "pandas"]);
+    
 
     // for debugging
     window.pyodide = _pyodide;
@@ -84,13 +91,18 @@ const runPythonFunction = async (functionName: string, args: any[] = []) => {
   }
 };
 
-async function runGameTickAnalysis(username: string): Promise<StatData> {
-  const data = await runPythonFunction('get_game_tick_data');
+async function runEnergyDataAnalysis(username: string): Promise<EnergyData> {
+  const data = await runPythonFunction('get_energy_data', [username]);
   return JSON.parse(data);
 }
 
 async function runTileDataAnalysis(username: string): Promise<TileData> {
-  const data = await runPythonFunction('get_tile_data');
+  const data = await runPythonFunction('get_tile_data', [username]);
+  return JSON.parse(data);
+}
+
+async function calculateTileCount(username: string): Promise<TileCount> {
+  const data = await runPythonFunction('calculate_tile_count', [username]);
   return JSON.parse(data);
 }
 
@@ -98,10 +110,12 @@ export {
   runScript,
   writeFileToFS,
   getPyodide,
-  runGameTickAnalysis,
-  runTileDataAnalysis,
   loadAnalysisModule,
+  runEnergyDataAnalysis,
+  runTileDataAnalysis,
+  calculateTileCount,
   type CombinedData,
-  type StatData,
+  type EnergyData,
   type TileData,
+  type TileCount,
 };
