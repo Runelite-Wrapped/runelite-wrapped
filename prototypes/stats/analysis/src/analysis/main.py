@@ -21,13 +21,6 @@ def calculate_tile_count(username):
     return json.dumps(tile_count_data)
 
 def main():
-    db_client = DbClient(DB_FILE)
-    energy_data = db_client.get_energy_data()
-    tile_data = db_client.get_tile_data()
-    tile_count = db_client.calculate_tile_count()
-
-    combined_data = {
-        "energyData": energy_data,
-        "tileData": tile_data
-    }
+    analytics_client = AnalyticsClient(DB_FILE)
+    combined_data = analytics_client.get_combined_data()
     return json.dumps(combined_data)
