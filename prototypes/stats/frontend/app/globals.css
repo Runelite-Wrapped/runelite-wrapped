@@ -1,17 +1,12 @@
-html {
-  margin: 0px;
-  padding: 0px;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-body {
-  margin: 0px;
-  padding: 0px;
-}
-
-.main-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
+.fade-in {
+  animation: fadeIn 1s ease-out;
 }

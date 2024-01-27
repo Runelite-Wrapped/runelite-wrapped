@@ -3,9 +3,25 @@
 // TODO: convert this into something like "usePyodide"
 let _pyodide: any;
 
-interface StatData {
+interface EnergyData {
   timestamps: number[];
   runEnergy: number[];
+}
+interface TileData {
+  timestamps: number[];
+  xcoord: number[];
+  ycoord: number[];
+  regionId: number[];
+}
+
+interface TileCount {
+  tilecount: number[]
+  username: string[],
+  favourite_tile: any[],
+}
+interface CombinedData {
+  energyData: EnergyData;
+  tileData: TileData;
 }
 
 const getPyodide = async () => {
@@ -19,7 +35,8 @@ const getPyodide = async () => {
         PYTHONPATH: "/",
       },
     });
-    _pyodide.loadPackage(["micropip", "packaging", "sqlite3"]);
+    await _pyodide.loadPackage(["micropip", "packaging", "sqlite3", "pandas"]);
+    
 
     // for debugging
     window.pyodide = _pyodide;
@@ -55,8 +72,37 @@ const runScript = async (code: string) => {
   }
 };
 
-async function runAnalysis(): Promise<StatData> {
-  const data = await runScript("import analysis; analysis.run()");
+// async function runAnalysis(): Promise<CombinedData> {
+//   const data = await runScript("import analysis; analysis.run()");
+//   return JSON.parse(data);
+// }
+
+const runPythonFunction = async (functionName: string, args: any[] = []) => {
+  const pyodide = await getPyodide();
+  const argStr = args.map(JSON.stringify).join(", ");
+  const code = `import analysis; analysis.${functionName}(${argStr})`;
+  
+  try {
+    const result = await pyodide.runPythonAsync(code);
+    return result;
+  } catch (error) {
+    console.error(error);
+    return error.message;
+  }
+};
+
+async function runEnergyDataAnalysis(username: string): Promise<EnergyData> {
+  const data = await runPythonFunction('get_energy_data', [username]);
+  return JSON.parse(data);
+}
+
+async function runTileDataAnalysis(username: string): Promise<TileData> {
+  const data = await runPythonFunction('get_tile_data', [username]);
+  return JSON.parse(data);
+}
+
+async function calculateTileCount(username: string): Promise<TileCount> {
+  const data = await runPythonFunction('calculate_tile_count', [username]);
   return JSON.parse(data);
 }
 
@@ -64,7 +110,12 @@ export {
   runScript,
   writeFileToFS,
   getPyodide,
-  runAnalysis,
   loadAnalysisModule,
-  type StatData,
+  runEnergyDataAnalysis,
+  runTileDataAnalysis,
+  calculateTileCount,
+  type CombinedData,
+  type EnergyData,
+  type TileData,
+  type TileCount,
 };
