@@ -14,9 +14,9 @@ import {
   TileCount,
   loadAnalysisModule,
 } from "../pythonWrapper";
-import EnergyPlot from "./EnergyPlot/EnergyPlot";
-import TilePlot from "./TilePlot/TilePlot";
-import TileSplatter from "./TileSplatter/TileSplatter";
+import EnergyPlot from "./Plots/EnergyPlot/EnergyPlot";
+import TilePlot from "./Plots/TilePlot/TilePlot";
+import TileSplatter from "./Plots/TileSplatter/TileSplatter";
 import { useDropzone } from "react-dropzone";
 import { useState } from "react";
 
